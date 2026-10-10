@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interview</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="章节导航">
+  <div class="wrap">
+    <a class="brand" href="#top">Interview</a>
+    <div class="nav-links">
+      <a href="#emnlp"><b>01</b><span>Selective OPSD</span></a>
+      <a href="#acl"><b>02</b><span>DUD 解耦式 UQ</span></a>
+      <a href="#aaai"><b>03</b><span>Sampling-Free UQ</span></a>
+      <a href="#project"><b>04</b><span>搜索广告相关性优化</span></a>
+    </div>
+  </div>
+  <div class="progress"></div>
+</nav>
+
+<!-- ================================================================ cover -->
+<header class="hero" id="top">
+  <div class="wrap hero-inner">
+    <div class="logos">
+      <span><img src="assets/logo-nuaa.jpg" alt="南京航空航天大学校徽" width="250" height="250"></span>
+      <span><img src="assets/logo-ai.png" alt="学院标识" width="509" height="511"></span>
+      <span><img src="assets/logo-nlp.png" alt="NUAA NLP" width="250" height="250"></span>
+    </div>
+    <h1>Interview</h1>
+    <div class="rule"></div>
+    <div class="agenda">
+      <a href="#emnlp">
+        <span class="num">01</span>
+        <span class="venue">EMNLP 2026</span>
+        <span class="t">Selective OPSD</span>
+        <span class="s">从无差别蒸馏到选择性蒸馏</span>
+      </a>
+      <a href="#acl">
+        <span class="num">02</span>
+        <span class="venue">ACL 2026</span>
+        <span class="t">DUD 解耦式 UQ</span>
+        <span class="s">解耦因果诊断 · Decoupled Causal Tracing</span>
+      </a>
+      <a href="#aaai">
+        <span class="num">03</span>
+        <span class="venue">AAAI 2026</span>
+        <span class="t">Sampling-Free UQ</span>
+        <span class="s">用隐状态动态替代采样</span>
+      </a>
+      <a href="#project">
+        <span class="num">04</span>
+        <span class="venue">项目</span>
+        <span class="t">基于大模型的搜索广告相关性优化</span>
+        <span class="s">从领域知识注入与推理能力对齐到轻量化蒸馏</span>
+      </a>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true"><span>SCROLL</span><i></i></div>
+</header>
+
+<main>
+
+<!-- ================================================================ 01 EMNLP -->
+<section id="emnlp">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">01</div>
+    <div class="wrap">
+      <span class="badge reveal">EMNLP 2026</span>
+      <h2 class="reveal">Selective OPSD</h2>
+      <p class="sub reveal">从无差别蒸馏到选择性蒸馏</p>
+      <div class="stats reveal">
+        <div class="stat"><b>12.5%</b><span>High-<i>H</i> 只保留 12.5% 的 rollout，仍能匹敌甚至超过 100% Full OPSD</span></div>
+        <div class="stat"><b>+1.9~3.1</b><span>BoN-4 在 1.7B / 4B / 8B 三个规模上一致超越 Full OPSD</span></div>
+        <div class="stat"><b>Teacher-Free</b><span>Score<sub>LH</sub> 仅用 student 侧统计量，在 teacher forward 前完成路由</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="emnlp-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.1</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>研究背景与问题</h3></div>
+      </header>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="no">01</div>
+          <h4>On-Policy Self-Distillation (OPSD)</h4>
+          <p>Teacher 与 Student <span class="hl">共享参数</span>、Teacher 额外观测答案，Student 在自身 rollout 上接收 teacher 分布监督，<span class="hl">无需外部教师即可自我提升推理能力</span>。</p>
+        </article>
+        <article class="card reveal" style="--d: .08s">
+          <div class="no">02</div>
+          <h4>核心问题 — 无差别对齐</h4>
+          <p>标准 OPSD 对所有 rollout 统一蒸馏，但不同 rollout 的<span class="hl">学习价值差异巨大</span>（student 已接近 teacher 时信号弱；分歧大时纠正信号强），无差别对齐会<span class="hl">稀释有效的纠正信号</span>。</p>
+        </article>
+        <article class="card key reveal" style="--d: .16s">
+          <div class="no">03</div>
+          <h4>本文思路 — 轨迹级路由</h4>
+          <p>在完整 rollout 之间做<span class="hl">排他选择</span>（区别于 token-level 重加权），只把<span class="hl">高价值轨迹送入蒸馏</span>，避免整条低价值轨迹的<span class="hl">噪声注入训练</span>。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.2</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>核心思路：从无差别蒸馏到选择性蒸馏</h3></div>
+      </header>
+      <div class="grid-2">
+        <div class="flow-row reveal">
+          <div class="flow-box"><div class="tag">问题</div><h4>无差别对齐</h4><p>所有 rollout 同等蒸馏，稀释纠正信号</p></div>
+          <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-box solution"><div class="tag">方案</div><h4>轨迹级评分</h4><p>量化每条 rollout 的蒸馏价值</p></div>
+        </div>
+        <div class="flow-row reveal" style="--d: .08s">
+          <div class="flow-box"><div class="tag">问题</div><h4>Teacher 计算昂贵</h4><p>每条 rollout 都需 teacher forward</p></div>
+          <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg></div>
+          <div class="flow-box solution"><div class="tag">方案</div><h4>选择性蒸馏</h4><p>只保留高价值轨迹，降低 teacher 开销</p></div>
+        </div>
+      </div>
+      <div class="grid-2 mt equal">
+        <figure class="fig reveal">
+          <img src="assets/emnlp-problem.jpg" alt="标准 OPSD 视角与观测到的 rollout 价值分布" width="2200" height="1071" loading="lazy" decoding="async">
+          <figcaption>问题</figcaption>
+        </figure>
+        <figure class="fig reveal" style="--d: .08s">
+          <img src="assets/emnlp-routing.png" alt="轨迹级路由与 token 级加权的对比" width="2200" height="1115" loading="lazy" decoding="async">
+          <figcaption>方案</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.3</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>方法总览：Selective OPSD 框架</h3></div>
+      </header>
+      <figure class="fig reveal">
+        <img src="assets/emnlp-framework.jpg" alt="Selective OPSD 框架总览" width="2200" height="683" loading="lazy" decoding="async">
+      </figure>
+      <div class="label mt reveal">整体流程</div>
+      <div class="steps reveal" style="--n: 4">
+        <div class="step"><h5>采样</h5><p>对每个 prompt 采样多条 rollout</p></div>
+        <div class="step"><h5>打分</h5><p>用打分函数评估每条轨迹的蒸馏价值</p></div>
+        <div class="step"><h5>选择</h5><p>只保留高价值轨迹（batch filtering 或 best-of-N routing）</p></div>
+        <div class="step"><h5>蒸馏</h5><p>仅对被选中的轨迹执行 teacher forward 与蒸馏，在提升效果的同时控制 teacher 计算开销。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.4</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>分析实验①：rollout 价值的非均匀性</h3></div>
+      </header>
+      <div class="panel reveal">
+        <div class="label">Entropy 过滤对比</div>
+        <div class="table-card">
+          <table class="rt">
+            <thead>
+              <tr><th class="l" rowspan="2">Model</th><th class="l" rowspan="2">Benchmark</th><th rowspan="2">100% (OPSD)</th><th class="span" colspan="2">50%</th><th class="span" colspan="2">25%</th><th class="span" colspan="2">12.5%</th></tr>
+              <tr><th>High-<i>H</i></th><th>Random</th><th>High-<i>H</i></th><th>Random</th><th>High-<i>H</i></th><th>Random</th></tr>
+            </thead>
+            <tbody>
+              <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-1.7B</th><td class="l">AIME24</td><td>56.94</td><td>55.83</td><td>53.61</td><td>54.72</td><td>55.00</td><td>57.22</td><td>51.94</td></tr>
+              <tr><td class="l">AIME25</td><td>43.05</td><td>43.33</td><td>41.94</td><td>41.67</td><td>39.72</td><td>42.78</td><td>39.72</td></tr>
+              <tr><td class="l">HMMT25</td><td>28.61</td><td>28.05</td><td>27.22</td><td>27.77</td><td>24.44</td><td>27.22</td><td>26.67</td></tr>
+            </tbody>
+            <tbody>
+              <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-4B</th><td class="l">AIME24</td><td>75.55</td><td>75.83</td><td>74.72</td><td>75.28</td><td>74.17</td><td>73.89</td><td>72.78</td></tr>
+              <tr><td class="l">AIME25</td><td>69.72</td><td>69.44</td><td>68.33</td><td>69.72</td><td>69.17</td><td>68.33</td><td>66.67</td></tr>
+              <tr><td class="l">HMMT25</td><td>44.44</td><td>43.06</td><td>42.22</td><td>43.33</td><td>41.94</td><td>41.67</td><td>40.56</td></tr>
+            </tbody>
+            <tbody>
+              <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-8B</th><td class="l">AIME24</td><td>76.67</td><td>77.78</td><td>75.00</td><td>77.22</td><td>75.83</td><td>76.11</td><td>77.78</td></tr>
+              <tr><td class="l">AIME25</td><td>70.56</td><td>70.83</td><td>67.22</td><td>69.72</td><td>68.61</td><td>70.83</td><td>68.33</td></tr>
+              <tr><td class="l">HMMT25</td><td>47.22</td><td>46.39</td><td>42.22</td><td>46.39</td><td>45.56</td><td>44.72</td><td>45.83</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>按 sequence entropy 保留 top-k%：High-<i>H</i> 只保留 12.5% 仍能匹敌甚至超过 100% Full OPSD，而随机保留明显更差 → rollout 的蒸馏价值高度非均匀，值得设计打分函数进行选择。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.5</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>分析实验②：打分函数设计（teacher-aware → teacher-free）</h3></div>
+      </header>
+      <div class="grid-3 narrow-mid compact">
+        <div class="panel reveal">
+          <div class="label"><span class="step-no">①</span>Teacher-Aware · Score<sub>HK</sub></div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th class="l">Benchmark</th><th>100%</th><th>50%</th><th>25%</th><th>12.5%</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-1.7B</th><td class="l">AIME24</td><td>56.94</td><td>57.78</td><td>55.83</td><td>55.27</td></tr>
+                <tr><td class="l">AIME25</td><td>43.05</td><td>43.89</td><td>42.22</td><td>41.94</td></tr>
+                <tr><td class="l">HMMT25</td><td>28.61</td><td>28.33</td><td>27.50</td><td>25.83</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-4B</th><td class="l">AIME24</td><td>75.55</td><td>76.39</td><td>75.00</td><td>72.78</td></tr>
+                <tr><td class="l">AIME25</td><td>69.72</td><td>70.00</td><td>69.44</td><td>69.17</td></tr>
+                <tr><td class="l">HMMT25</td><td>44.44</td><td>43.33</td><td>43.06</td><td>42.22</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-8B</th><td class="l">AIME24</td><td>76.67</td><td>75.27</td><td>76.67</td><td>75.28</td></tr>
+                <tr><td class="l">AIME25</td><td>70.56</td><td>70.83</td><td>70.56</td><td>68.61</td></tr>
+                <tr><td class="l">HMMT25</td><td>47.22</td><td>47.50</td><td>46.39</td><td>47.22</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label"><span class="step-no">②</span>象限分析：短回复 → KL 更高</div>
+          <figure class="fig">
+            <img src="assets/emnlp-quadrant.png" alt="按熵与回复长度划分的象限分析" width="2200" height="1755" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="panel reveal" style="--d: .16s">
+          <div class="label"><span class="step-no">③</span>Teacher-Free · Score<sub>LH</sub></div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th class="l">Benchmark</th><th>100%</th><th>50%</th><th>25%</th><th>12.5%</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-1.7B</th><td class="l">AIME24</td><td>56.94</td><td>58.06</td><td>53.33</td><td>56.11</td></tr>
+                <tr><td class="l">AIME25</td><td>43.05</td><td>42.22</td><td>40.28</td><td>38.61</td></tr>
+                <tr><td class="l">HMMT25</td><td>28.61</td><td>28.33</td><td>25.56</td><td>26.11</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-4B</th><td class="l">AIME24</td><td>75.55</td><td>76.66</td><td>74.44</td><td>73.61</td></tr>
+                <tr><td class="l">AIME25</td><td>69.72</td><td>70.28</td><td>68.61</td><td>67.50</td></tr>
+                <tr><td class="l">HMMT25</td><td>44.44</td><td>44.72</td><td>40.83</td><td>44.44</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-8B</th><td class="l">AIME24</td><td>76.67</td><td>78.61</td><td>77.50</td><td>76.11</td></tr>
+                <tr><td class="l">AIME25</td><td>70.56</td><td>71.11</td><td>68.06</td><td>68.06</td></tr>
+                <tr><td class="l">HMMT25</td><td>47.22</td><td>48.61</td><td>46.67</td><td>45.28</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>Teacher-Aware：Score<sub>HK</sub> = K̂·(1−Ĥ)，50% 保留即匹敌 full OPSD，但需 teacher forward。象限分析发现「短回复 → KL 更高」，故用 length 作为 teacher-free 代理：Score<sub>LH</sub> = (1−L̂)·(1−Ĥ)，仅用 student 侧统计量即可在 teacher forward 前完成路由。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.6</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>训练动态分析 &amp; 主实验结果</h3></div>
+      </header>
+      <div class="grid-2">
+        <div class="panel reveal">
+          <div class="label">训练动态</div>
+          <figure class="fig">
+            <img src="assets/emnlp-dynamics.png" alt="Selected 与 Discarded 轨迹的打分动态" width="1826" height="1258" loading="lazy" decoding="async">
+          </figure>
+          <div class="takeaway">
+            <span class="tag">结论</span>
+            <p>Selected 与 Discarded 轨迹打分全程分离，选择标准自洽；BoN-4 在 1.7B/4B/8B 三个规模上一致超越 Full OPSD（+1.9~3.1），不增加 teacher 开销即取得显著提升。</p>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">主实验结果 (AIME24/25, HMMT25)</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th class="l">Method</th><th>AIME24</th><th>AIME25</th><th>HMMT25</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="5" scope="rowgroup">Qwen3-1.7B</th><td class="l">Base</td><td>51.38</td><td>36.66</td><td>23.05</td></tr>
+                <tr><td class="l">SFT</td><td>48.33</td><td>36.38</td><td>22.77</td></tr>
+                <tr><td class="l">GRPO</td><td>51.11</td><td>38.33</td><td>23.61</td></tr>
+                <tr><td class="l">Full OPSD</td><td>56.94</td><td>43.05</td><td>28.61</td></tr>
+                <tr class="em"><td class="l">BoN-4 (Ours)</td><td>59.45</td><td>45.00</td><td>30.56</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="5" scope="rowgroup">Qwen3-4B</th><td class="l">Base</td><td>74.72</td><td>66.38</td><td>42.22</td></tr>
+                <tr><td class="l">SFT</td><td>70.28</td><td>62.22</td><td>43.33</td></tr>
+                <tr><td class="l">GRPO</td><td>75.55</td><td>68.05</td><td>44.44</td></tr>
+                <tr><td class="l">Full OPSD</td><td>75.55</td><td>69.72</td><td>44.44</td></tr>
+                <tr class="em"><td class="l">BoN-4 (Ours)</td><td>78.61</td><td>72.50</td><td>47.22</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="5" scope="rowgroup">Qwen3-8B</th><td class="l">Base</td><td>75.56</td><td>65.55</td><td>43.88</td></tr>
+                <tr><td class="l">SFT</td><td>72.22</td><td>64.16</td><td>42.77</td></tr>
+                <tr><td class="l">GRPO</td><td>76.38</td><td>68.88</td><td>46.66</td></tr>
+                <tr><td class="l">Full OPSD</td><td>76.67</td><td>70.56</td><td>47.22</td></tr>
+                <tr class="em"><td class="l">BoN-4 (Ours)</td><td>79.17</td><td>73.61</td><td>50.28</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="emnlp-7">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">1.7</span>
+        <div><p class="kicker">EMNLP 2026 · Selective OPSD</p><h3>消融实验</h3></div>
+      </header>
+      <div class="grid-3 narrow-first compact">
+        <div class="panel reveal">
+          <div class="label">BoN 候选数消融</div>
+          <figure class="fig">
+            <img src="assets/emnlp-bon.png" alt="BoN 候选数消融曲线" width="1730" height="1264" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">打分规则消融</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th class="l">Rule</th><th>AIME24</th><th>AIME25</th><th>HMMT25</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">Qwen3-1.7B</th><td class="l">Random-<i>N</i></td><td>56.39</td><td>42.77</td><td>28.33</td></tr>
+                <tr><td class="l">Max-<i>H</i></td><td>57.22</td><td>43.33</td><td>28.05</td></tr>
+                <tr><td class="l">Min-<i>H</i></td><td>51.66</td><td>36.94</td><td>23.61</td></tr>
+                <tr class="em"><td class="l">Score<sub>LH</sub> (Ours)</td><td>59.45</td><td>45.00</td><td>30.56</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">Qwen3-4B</th><td class="l">Random-<i>N</i></td><td>74.44</td><td>68.89</td><td>43.61</td></tr>
+                <tr><td class="l">Max-<i>H</i></td><td>75.83</td><td>69.72</td><td>43.33</td></tr>
+                <tr><td class="l">Min-<i>H</i></td><td>75.00</td><td>66.94</td><td>42.78</td></tr>
+                <tr class="em"><td class="l">Score<sub>LH</sub> (Ours)</td><td>78.61</td><td>72.50</td><td>47.22</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">Qwen3-8B</th><td class="l">Random-<i>N</i></td><td>76.11</td><td>71.11</td><td>46.94</td></tr>
+                <tr><td class="l">Max-<i>H</i></td><td>77.78</td><td>70.83</td><td>46.39</td></tr>
+                <tr><td class="l">Min-<i>H</i></td><td>75.28</td><td>66.67</td><td>44.44</td></tr>
+                <tr class="em"><td class="l">Score<sub>LH</sub> (Ours)</td><td>79.17</td><td>73.61</td><td>50.28</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .16s">
+          <div class="label">Pseudo-Target 对比</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th class="l">Method</th><th>AIME24</th><th>AIME25</th><th>HMMT25</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-1.7B</th><td class="l">Base</td><td>51.38</td><td>36.66</td><td>23.05</td></tr>
+                <tr><td class="l">OPSD</td><td>56.94</td><td><strong>43.05</strong></td><td><strong>28.61</strong></td></tr>
+                <tr><td class="l">Pseudo-Target</td><td><strong>57.22</strong></td><td>42.22</td><td>27.78</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-4B</th><td class="l">Base</td><td>74.72</td><td>66.38</td><td>42.22</td></tr>
+                <tr><td class="l">OPSD</td><td><strong>75.55</strong></td><td><strong>69.72</strong></td><td>44.44</td></tr>
+                <tr><td class="l">Pseudo-Target</td><td>75.28</td><td>67.78</td><td><strong>44.72</strong></td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen3-8B</th><td class="l">Base</td><td>75.56</td><td>65.55</td><td>43.88</td></tr>
+                <tr><td class="l">OPSD</td><td>76.67</td><td><strong>70.56</strong></td><td>47.22</td></tr>
+                <tr><td class="l">Pseudo-Target</td><td><strong>76.94</strong></td><td>69.72</td><td><strong>47.78</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>Score<sub>LH</sub> 在所有规模上均为最优打分策略；BoN 路由随 N 增大持续提升，N=12 附近饱和，teacher 开销恒为 1；Pseudo-Target 无法一致超越真实 teacher OPSD，验证了 teacher 信号的不可替代性。</p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================================================================ 02 ACL -->
+<section id="acl">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">02</div>
+    <div class="wrap">
+      <span class="badge reveal">ACL 2026</span>
+      <h2 class="reveal">DUD 解耦式 UQ</h2>
+      <p class="sub reveal">解耦因果诊断 · Decoupled Causal Tracing</p>
+      <div class="stats reveal">
+        <div class="stat"><b>+20.3</b><span>较 Semantic Entropy（Llama · HaluEval）</span></div>
+        <div class="stat"><b>+3~8</b><span>较最强聚合基线 ICR Probe 平均提升</span></div>
+        <div class="stat"><b>&lt; 5%</b><span>跨域迁移平均掉点</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="acl-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.1</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>研究背景与问题</h3></div>
+      </header>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="no">01</div>
+          <h4>现有 UQ 方法的局限</h4>
+          <p>黑盒自一致性依赖<span class="hl">采样冗余</span>、开销高；Logits 类白盒方法（如 Semantic Entropy）只看输出概率，<span class="hl">不检视内部推理过程</span>，把生成当作静态结果而非动态认知过程。</p>
+        </article>
+        <article class="card reveal" style="--d: .08s">
+          <div class="no">02</div>
+          <h4>机制方法的关键缺陷</h4>
+          <p>ROME 指出 FFN 存<span class="hl">参数化记忆</span>、MHSA 负责<span class="hl">上下文路由</span>；但 SAPLMA / ICR Probe 用聚合把两者求和平均，而不确定性恰恰源于二者<span class="hl">冲突</span>，聚合会中和掉证据。</p>
+        </article>
+        <article class="card key reveal" style="--d: .16s">
+          <div class="no">03</div>
+          <h4>本文思路 — 解耦因果诊断</h4>
+          <p>注入噪声制造<span class="hl">信息瓶颈</span>，再逐层<span class="hl">独立恢复</span> FFN 与 Attention 激活，把推理轨迹拆成两条因果流，形成 2L 维画像供轻量 probe 判定。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="acl-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.2</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>方法总览：Decoupled Causal Tracing</h3></div>
+      </header>
+      <figure class="fig reveal">
+        <img src="assets/acl-framework.png" alt="Decoupled Causal Tracing 方法总览" width="2200" height="933" loading="lazy" decoding="async">
+      </figure>
+      <div class="label mt reveal">三阶段流程</div>
+      <div class="steps reveal" style="--n: 3">
+        <div class="step"><h5>Clean Run</h5><p>缓存各层 a<sup>(l)</sup>/m<sup>(l)</sup> 与 P<sub>clean</sub></p></div>
+        <div class="step"><h5>Corrupted Run</h5><p>对 embedding 注入高斯噪声，得 TE = mean(P<sub>clean</sub> − P<sub>corr</sub>)</p></div>
+        <div class="step"><h5>Patch Run</h5><p><span class="hl">分别只恢复 Attn 或只恢复 FFN</span>，S<sub>φ</sub><sup>(l)</sup> = (P<sub>patch</sub> − P<sub>corr</sub>)/TE，拼成 2L 维画像输入 MLP(2L→128→64→32→1)。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="acl-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.3</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>分析实验①：机制脆弱性的层级模式</h3></div>
+      </header>
+      <div class="panel reveal">
+        <div class="label">逐层 Restoration Score：HaluEval（左） / HotpotQA（右）</div>
+        <figure class="fig">
+          <img src="assets/acl-restoration.png" alt="逐层 Restoration Score：HaluEval 与 HotpotQA" width="2200" height="698" loading="lazy" decoding="async">
+        </figure>
+      </div>
+      <div class="phases reveal">
+        <div class="phase"><div class="range">早期层 (0-5)</div><p>FFN 与 Attn 同现深负谷</p></div>
+        <div class="phase"><div class="range">中间层 (6-20)</div><p>FFN 稳定低于 Attn</p></div>
+        <div class="phase"><div class="range">后期层 (20-28)</div><p>FFN 骤降而 Attn 趋近 0</p></div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>错误预测的负值约为正确的 2 倍 → <span class="hl">机制脆弱性可作为不确定性代理</span>。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="acl-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.4</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>分析实验②：逐层判别力与置信度悖论</h3></div>
+      </header>
+      <div class="grid-7-5">
+        <div class="panel reveal">
+          <div class="label">逐层 AUROC（FFN / Attn）</div>
+          <figure class="fig">
+            <img src="assets/acl-layer-auroc.png" alt="FFN 与 Attention 的逐层 AUROC" width="2200" height="1564" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="stack">
+          <div class="panel reveal" style="--d: .08s">
+            <div class="label">四象限错误率</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l">Quadrant (Layer 23)</th><th class="l">Mechanistic State</th><th>Error Rate</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="l">Q1</td><td class="l">Robust / Nominal</td><td>16.8%</td></tr>
+                  <tr><td class="l">Q2</td><td class="l">Context Deviant</td><td>28.0%</td></tr>
+                  <tr><td class="l">Q3</td><td class="l">Memory Deviant</td><td>61.7%</td></tr>
+                  <tr class="em"><td class="l">Q4</td><td class="l">Dual Deviant</td><td>72.0%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel reveal" style="--d: .16s">
+            <div class="label">四象限平均置信度</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l">Quadrant</th><th>Mean Conf. Correct</th><th>Incorrect</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td class="l">Q1  Robust</td><td>1.372</td><td><strong>0.728</strong></td></tr>
+                  <tr><td class="l">Q2  Context</td><td>1.130</td><td>0.410</td></tr>
+                  <tr><td class="l">Q3  Memory</td><td>0.785</td><td>0.364</td></tr>
+                  <tr><td class="l">Q4  Dual</td><td><strong>0.682</strong></td><td>0.337</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>逐层 AUROC：FFN 峰值 Layer 24 (0.767)，Attn 峰值 Layer 20 (0.745)，<span class="hl">峰值层错开、信息互补</span>。四象限错误率由 Q1 的 16.8% 升至 Q4 的 72.0%，但 Q1 错误置信度 (0.728) 高于 Q4 正确 (0.682)——概率阈值无法区分顽固错误与谦逊真相。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="acl-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.5</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>主实验结果 &amp; 跨数据集泛化</h3></div>
+      </header>
+      <div class="grid-2">
+        <div class="panel reveal">
+          <div class="label">主实验结果 (AUROC · Llama-3.1-8B)</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Method</th><th>HaluEval</th><th>SQuAD</th><th>HotpotQA</th><th>TriviaQA</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="l">PPL</td><td>0.5720</td><td>0.6231</td><td>0.6577</td><td>0.7238</td></tr>
+                <tr><td class="l">LN-Entropy</td><td>0.6431</td><td>0.6203</td><td>0.6643</td><td>0.5994</td></tr>
+                <tr><td class="l">Semantic Entropy</td><td>0.7745</td><td>0.7041</td><td>0.7143</td><td>0.7362</td></tr>
+                <tr><td class="l">SAR</td><td>0.7793</td><td>0.7531</td><td>0.7335</td><td>0.7647</td></tr>
+                <tr><td class="l">LLM-Check</td><td>0.5348</td><td>0.5331</td><td>0.5501</td><td>0.5275</td></tr>
+                <tr><td class="l">SAPLMA</td><td>0.7328</td><td>0.7007</td><td>0.7638</td><td>0.7650</td></tr>
+                <tr><td class="l">SEP</td><td>0.7547</td><td>0.7309</td><td>0.6537</td><td>0.7241</td></tr>
+                <tr><td class="l">ICR Probe</td><td>0.7703</td><td>0.7548</td><td>0.8139</td><td>0.7557</td></tr>
+              </tbody>
+              <tbody>
+                <tr class="em"><td class="l">DUD-Probe (Ours)</td><td>0.9487</td><td>0.8959</td><td>0.8579</td><td>0.8031</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">跨数据集泛化 (DUD, train → test)</div>
+          <figure class="fig">
+            <img src="assets/acl-generalization.png" alt="DUD 跨数据集泛化热力图" width="1821" height="1315" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>较 Semantic Entropy 在 Llama HaluEval 上 +20.3、SQuAD +16.3；较最强聚合基线 ICR Probe 平均 +3~8 点。跨域迁移平均掉点 <span class="hl">&lt; 5%</span>，TriviaQA→HaluEval 达 0.930，逼近同域上界 0.949。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="acl-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">2.6</span>
+        <div><p class="kicker">ACL 2026 · DUD 解耦式 UQ</p><h3>消融实验</h3></div>
+      </header>
+      <div class="grid-5-7 compact">
+        <div class="panel reveal">
+          <div class="label">模块与层级消融（Llama-3.1-8B）</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Configuration</th><th>Halu</th><th>SQ</th><th>Hot</th><th>Triv</th></tr>
+              </thead>
+              <tbody>
+                <tr class="sec"><td class="l" colspan="5">I. Module Contribution</td></tr>
+                <tr><td class="l">Random</td><td>0.5000</td><td>0.5000</td><td>0.5000</td><td>0.5000</td></tr>
+                <tr><td class="l">Attn Only</td><td>0.9144</td><td>0.8349</td><td>0.7933</td><td>0.7385</td></tr>
+                <tr><td class="l">FFN Only</td><td>0.8968</td><td>0.8511</td><td>0.7872</td><td>0.7447</td></tr>
+                <tr class="em"><td class="l">Full (dual-stream)</td><td>0.9487</td><td>0.8959</td><td>0.8579</td><td>0.8031</td></tr>
+              </tbody>
+              <tbody>
+                <tr class="sec"><td class="l" colspan="5">II. Layer Contribution (removed from Full)</td></tr>
+                <tr><td class="l">w/o EL (1-10)</td><td>0.8511</td><td>0.8351</td><td>0.7845</td><td>0.7164</td></tr>
+                <tr><td class="l">w/o ML (11-21)</td><td>0.8893</td><td>0.8241</td><td>0.7576</td><td>0.7281</td></tr>
+                <tr><td class="l">w/o DL (22-32)</td><td>0.9001</td><td>0.8024</td><td>0.8005</td><td>0.7542</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="takeaway">
+            <span class="tag">结论</span>
+            <p>单流探针已优于随机，但双流 Full 在全部数据集最优 → <span class="hl">解耦后同时保留两条通路是增益来源</span>；移除任一层组都掉点，不存在单一「黄金层」；ECE / PRR 与换用 EM、BERTScore 标注时同样全面领先。</p>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="panel reveal" style="--d: .08s">
+            <div class="label">校准与拒答效率（ECE ↓ / PRR ↑）</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l"></th><th class="l">Method</th><th>HaluEval</th><th>SQuAD</th><th>HotpotQA</th><th>TriviaQA</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th class="l g" rowspan="4" scope="rowgroup">ECE</th><td class="l">SEP</td><td>0.1431</td><td>0.1537</td><td>0.0979</td><td>0.1019</td></tr>
+                  <tr><td class="l">SAPLMA</td><td>0.0997</td><td>0.1578</td><td>0.0675</td><td>0.0435</td></tr>
+                  <tr><td class="l">ICR Probe</td><td>0.0798</td><td>0.0314</td><td>0.0138</td><td>0.0662</td></tr>
+                  <tr class="em"><td class="l">DUD-Probe</td><td>0.0425</td><td>0.0173</td><td>0.0039</td><td>0.0289</td></tr>
+                </tbody>
+                <tbody>
+                  <tr><th class="l g" rowspan="4" scope="rowgroup">PRR</th><td class="l">SEP</td><td>0.3927</td><td>0.3578</td><td>0.3243</td><td>0.3696</td></tr>
+                  <tr><td class="l">SAPLMA</td><td>0.4414</td><td>0.4675</td><td>0.4373</td><td>0.4459</td></tr>
+                  <tr><td class="l">ICR Probe</td><td>0.4989</td><td>0.5204</td><td>0.4361</td><td>0.5435</td></tr>
+                  <tr class="em"><td class="l">DUD-Probe</td><td>0.6346</td><td>0.5669</td><td>0.5187</td><td>0.5945</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel reveal" style="--d: .16s">
+            <div class="label">标注准则鲁棒性（EM / BERTScore）</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l"></th><th class="l">Method</th><th>HaluEval</th><th>SQuAD</th><th>HotpotQA</th><th>TriviaQA</th></tr>
+                </thead>
+                <tbody>
+                  <tr><th class="l g" rowspan="4" scope="rowgroup">Exact Match</th><td class="l">SEP</td><td>0.6544</td><td>0.6038</td><td>0.6359</td><td>0.7754</td></tr>
+                  <tr><td class="l">SAPLMA</td><td>0.7341</td><td>0.7267</td><td>0.7148</td><td>0.7749</td></tr>
+                  <tr><td class="l">ICR Probe</td><td>0.7554</td><td>0.7543</td><td>0.7497</td><td>0.7903</td></tr>
+                  <tr class="em"><td class="l">DUD-Probe</td><td>0.8204</td><td>0.8801</td><td>0.8717</td><td>0.8461</td></tr>
+                </tbody>
+                <tbody>
+                  <tr><th class="l g" rowspan="4" scope="rowgroup">BERTScore > .95</th><td class="l">SEP</td><td>0.6643</td><td>0.6111</td><td>0.6799</td><td>0.7034</td></tr>
+                  <tr><td class="l">SAPLMA</td><td>0.7267</td><td>0.7313</td><td>0.7524</td><td>0.7348</td></tr>
+                  <tr><td class="l">ICR Probe</td><td>0.7347</td><td>0.7432</td><td>0.7781</td><td>0.7438</td></tr>
+                  <tr class="em"><td class="l">DUD-Probe</td><td>0.8111</td><td>0.8541</td><td>0.8969</td><td>0.8249</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================================================================ 03 AAAI -->
+<section id="aaai">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">03</div>
+    <div class="wrap">
+      <span class="badge reveal">AAAI 2026</span>
+      <h2 class="reveal">Sampling-Free UQ</h2>
+      <p class="sub reveal">用隐状态动态替代采样</p>
+      <div class="stats reveal">
+        <div class="stat"><b>25×</b><span>单次前向替代 5 次采样（Qwen-7B 上 ~25h → ~1h）</span></div>
+        <div class="stat"><b>&lt; 0.14</b><span>与 Semantic Entropy 的 Pearson 相关系数（多数 &lt; 0.09）</span></div>
+        <div class="stat"><b>6 × 4</b><span>6 个模型规模 × 4 数据集，全部单元格最优</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="aaai-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.1</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>研究背景与经验发现</h3></div>
+      </header>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="no">01</div>
+          <h4>采样开销瓶颈</h4>
+          <p>主流 UQ 依赖 Monte Carlo 采样（每条样本 <span class="hl">5 次生成</span>）或调用外部模型 API，既放大计算量又<span class="hl">累积额外误差</span>；Qwen-7B 上约 25 小时/数据集，难以满足实时低延迟部署。</p>
+        </article>
+        <article class="card reveal" style="--d: .08s">
+          <div class="no">02</div>
+          <h4>经验发现①（logit lens）</h4>
+          <p>高置信 token 在<span class="hl">浅层即已稳定浮现</span>于词表空间，不确信 token 只有到<span class="hl">深层才清晰成形</span> → 层级演化路径本身就是确定性的直接指示。</p>
+        </article>
+        <article class="card key reveal" style="--d: .16s">
+          <div class="no">03</div>
+          <h4>本文思路 — 用隐状态动态替代采样</h4>
+          <p>追踪各层表示与最终层的语义相似度轨迹，量化<span class="hl">拐点前的稳定性</span>与<span class="hl">拐点后的收敛决断度</span>，单次前向即可得到不确定性分数。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="aaai-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.2</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>分析实验①：逐层 token 预测动态（Logit Lens）</h3></div>
+      </header>
+      <div class="grid-5-7">
+        <div class="panel reveal">
+          <div class="label">Logit Lens 逐层解码（行 = 层，列 = token，色 = 概率）</div>
+          <figure class="fig">
+            <img src="assets/aaai-logit-lens.png" alt="Logit Lens 逐层解码热力图" width="725" height="911" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">关键观察</div>
+          <ol class="obs">
+            <li><span class="n">1</span><p>逐层解码可见预测的<span class="hl">“成熟”过程</span>：浅层输出模糊甚至无关的 token，随深度推进逐步收敛到最终答案。</p></li>
+            <li><span class="n">2</span><p>已内化的知识<span class="hl">出现得更早</span>：命名实体与常见词在浅层即已锁定 —— Rico、Stat 两列自最底层起就是正确 token，而 added、the 要到 20~28 层才收敛。</p></li>
+            <li><span class="n">3</span><p>由此形成核心假设：早期预测的<span class="hl">时机与稳定性</span>反映模型对该知识的确定程度，可作为无需采样的不确定性信号。</p></li>
+          </ol>
+          <div class="takeaway">
+            <span class="tag">结论</span>
+            <p>token 预测的“成熟时机”本身携带置信度信息，可用<span class="hl">单次前向的逐层动态替代多次采样</span>。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="aaai-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.3</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>分析实验②：语义演化对比</h3></div>
+      </header>
+      <div class="panel reveal">
+        <div class="label">Uncertain vs Confident：热力图 (a)(b) 与相似度曲线 (c)(d)</div>
+        <figure class="fig">
+          <img src="assets/aaai-semantic.png" alt="Uncertain 与 Confident 样本的语义演化热力图与相似度曲线" width="2200" height="717" loading="lazy" decoding="async">
+        </figure>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>(a)(b) 热力图：uncertain 颜色渐变、收敛慢，certain 快速统一；(c)(d) 层级 cosine：uncertain <span class="hl">早期波动大、收敛迟缓</span>，confident 早期稳定、后段陡升——正是 SSS 与 CCS 刻画的模式。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="aaai-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.4</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>分析实验③：效率与正交性</h3></div>
+      </header>
+      <div class="grid-3 compact">
+        <div class="panel reveal">
+          <div class="label"><span class="step-no">①</span>执行耗时：Ours vs Baseline（小时）</div>
+          <figure class="fig">
+            <img src="assets/aaai-efficiency.png" alt="各数据集与模型规模下的执行耗时对比" width="2200" height="1760" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label"><span class="step-no">②</span>与 Semantic Entropy 的 Pearson 相关系数</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l"></th><th class="l">Size</th><th>CoQA</th><th>NewsQA</th><th>SQuAD</th><th>NQ</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Qwen</th><td class="l">7B</td><td>0.083</td><td>0.088</td><td>0.075</td><td>0.033</td></tr>
+                <tr><td class="l">3B</td><td>0.035</td><td>0.047</td><td>0.075</td><td>0.084</td></tr>
+                <tr><td class="l">1.5B</td><td>0.043</td><td>0.087</td><td>0.093</td><td>0.054</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="3" scope="rowgroup">Llama</th><td class="l">8B</td><td>0.042</td><td>0.035</td><td>0.014</td><td>0.064</td></tr>
+                <tr><td class="l">3B</td><td>0.133</td><td>0.057</td><td>0.072</td><td>0.107</td></tr>
+                <tr><td class="l">1B</td><td>0.056</td><td>0.075</td><td>0.135</td><td>0.067</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .16s">
+          <div class="label"><span class="step-no">③</span>正确 / 错误预测的分数：Ours vs SE</div>
+          <figure class="fig">
+            <img src="assets/aaai-score-dist.png" alt="正确与错误预测的分数对比：Ours 与 SE" width="2200" height="1449" loading="lazy" decoding="async">
+          </figure>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>单次前向替代 5 次采样，总脚本耗时约 <span class="hl">25× 加速</span>（Qwen-7B 上 ~25h → ~1h）。与 Semantic Entropy 的 Pearson 相关系数全部低于 0.14（多数 &lt; 0.09），说明二者捕获<span class="hl">不同维度的不确定性</span>；且本方法对正确/错误预测的分数分离度明显优于 SE。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="aaai-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.5</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>主实验结果（PRR / AUROC）</h3></div>
+      </header>
+      <div class="grid-2">
+        <div class="panel reveal">
+          <div class="label">Qwen 1.5B / 3B / 7B</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Size</th><th class="l">Dataset</th><th>Ours</th><th>SE</th><th>SAR</th><th>LNPE</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">7B</th><td class="l">CoQA</td><td><strong>60.19/76.66</strong></td><td>5.70/73.43</td><td>13.70/76.03</td><td>5.61/72.04</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>59.86/74.32</strong></td><td>25.20/70.05</td><td>25.20/69.36</td><td>25.61/71.83</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>75.95/71.85</strong></td><td>44.38/65.37</td><td>44.35/68.52</td><td>44.41/67.52</td></tr>
+                <tr><td class="l">NQ</td><td><strong>35.09/78.41</strong></td><td>6.24/75.61</td><td>10.52/70.10</td><td>6.46/74.32</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">3B</th><td class="l">CoQA</td><td><strong>49.41/66.95</strong></td><td>33.99/63.74</td><td>33.96/61.24</td><td>33.99/63.75</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>43.09/70.94</strong></td><td>41.26/64.43</td><td>35.42/68.74</td><td>33.69/65.36</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>50.79/70.06</strong></td><td>32.22/64.38</td><td>40.92/65.44</td><td>32.06/64.32</td></tr>
+                <tr><td class="l">NQ</td><td><strong>33.58/77.85</strong></td><td>33.01/70.15</td><td>28.99/75.05</td><td>12.48/69.43</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">1.5B</th><td class="l">CoQA</td><td><strong>49.48/64.83</strong></td><td>41.23/61.33</td><td>48.68/62.31</td><td>41.25/61.45</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>37.68/64.35</strong></td><td>33.31/62.38</td><td>30.73/62.45</td><td>34.08/62.33</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>50.12/68.41</strong></td><td>25.31/63.47</td><td>31.52/60.31</td><td>30.19/64.33</td></tr>
+                <tr><td class="l">NQ</td><td><strong>32.04/71.66</strong></td><td>23.44/65.62</td><td>18.35/66.32</td><td>23.45/65.08</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">Llama 1B / 3B / 8B</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Size</th><th class="l">Dataset</th><th>Ours</th><th>SE</th><th>SAR</th><th>LNPE</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">8B</th><td class="l">CoQA</td><td><strong>56.34/73.23</strong></td><td>9.30/70.14</td><td>10.35/69.03</td><td>13.56/71.03</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>33.49/70.01</strong></td><td>32.19/66.35</td><td>30.52/67.45</td><td>29.33/63.37</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>59.64/72.97</strong></td><td>45.31/67.42</td><td>46.37/70.31</td><td>38.73/68.35</td></tr>
+                <tr><td class="l">NQ</td><td><strong>32.18/83.67</strong></td><td>23.88/75.09</td><td>19.38/77.48</td><td>22.03/75.61</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">3B</th><td class="l">CoQA</td><td><strong>52.95/70.03</strong></td><td>45.38/63.05</td><td>46.35/65.42</td><td>45.38/64.71</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>29.82/67.21</strong></td><td>25.38/64.76</td><td>17.35/66.75</td><td>24.52/63.04</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>49.65/71.67</strong></td><td>32.76/65.03</td><td>30.43/64.03</td><td>33.15/66.43</td></tr>
+                <tr><td class="l">NQ</td><td><strong>28.98/76.91</strong></td><td>9.33/69.93</td><td>10.38/70.15</td><td>8.59/70.35</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="4" scope="rowgroup">1B</th><td class="l">CoQA</td><td><strong>21.53/65.88</strong></td><td>9.65/61.12</td><td>9.65/63.31</td><td>7.38/61.11</td></tr>
+                <tr><td class="l">NewsQA</td><td><strong>29.68/65.94</strong></td><td>15.23/61.15</td><td>16.53/60.15</td><td>15.98/62.03</td></tr>
+                <tr><td class="l">SQuAD</td><td><strong>22.96/62.31</strong></td><td>20.33/59.39</td><td>18.95/55.43</td><td>19.73/60.91</td></tr>
+                <tr><td class="l">NQ</td><td><strong>25.03/64.19</strong></td><td>15.87/61.33</td><td>20.37/60.03</td><td>15.88/61.35</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>QA 任务在 6 个模型规模 × 4 数据集上<span class="hl">全部单元格最优</span>，AUROC 较 SE / SAR / LNPE 领先 3~8 点，PRR 优势更大（Qwen-7B SQuAD 75.95 vs SE 44.38；Llama-8B NQ 32.18/83.67）。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="aaai-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">3.6</span>
+        <div><p class="kicker">AAAI 2026 · Sampling-Free UQ</p><h3>消融实验与扩展任务</h3></div>
+      </header>
+      <div class="grid-7-5 compact">
+        <div class="stack">
+          <div class="panel reveal">
+            <div class="label">双指标消融（Ours / SSS / CCS）</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l"></th><th class="l">Variant</th><th>CoQA</th><th>NewsQA</th><th>SQuAD</th><th>NQ</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="em"><th class="l g" rowspan="3" scope="rowgroup">Qwen-7B</th><td class="l">Ours (SSS+CCS)</td><td>76.66</td><td>74.32</td><td>71.85</td><td>78.41</td></tr>
+                  <tr><td class="l">SSS only</td><td>51.14</td><td>44.79</td><td>41.00</td><td>59.51</td></tr>
+                  <tr><td class="l">CCS only</td><td>47.43</td><td>50.37</td><td>49.77</td><td>50.71</td></tr>
+                </tbody>
+                <tbody>
+                  <tr class="em"><th class="l g" rowspan="3" scope="rowgroup">Llama-8B</th><td class="l">Ours (SSS+CCS)</td><td>73.23</td><td>70.01</td><td>72.97</td><td>83.67</td></tr>
+                  <tr><td class="l">SSS only</td><td>52.47</td><td>49.33</td><td>59.70</td><td>70.80</td></tr>
+                  <tr><td class="l">CCS only</td><td>52.59</td><td>50.09</td><td>50.46</td><td>57.40</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel reveal" style="--d: .08s">
+            <div class="label">聚合策略消融（Ours / AVG / Dyn.）</div>
+            <div class="table-card">
+              <table class="rt">
+                <thead>
+                  <tr><th class="l"></th><th class="l">Variant</th><th>CoQA</th><th>NewsQA</th><th>SQuAD</th><th>NQ</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="em"><th class="l g" rowspan="3" scope="rowgroup">Qwen-7B</th><td class="l">Ours (max-H head)</td><td>76.66</td><td>74.32</td><td>71.85</td><td>78.41</td></tr>
+                  <tr><td class="l">AVG</td><td>74.54</td><td>72.06</td><td>67.53</td><td>68.41</td></tr>
+                  <tr><td class="l">Dynamic</td><td>74.54</td><td>72.06</td><td>67.53</td><td>68.46</td></tr>
+                </tbody>
+                <tbody>
+                  <tr class="em"><th class="l g" rowspan="3" scope="rowgroup">Llama-8B</th><td class="l">Ours (max-H head)</td><td>73.23</td><td>70.01</td><td>72.97</td><td>83.67</td></tr>
+                  <tr><td class="l">AVG</td><td>70.52</td><td>62.42</td><td>66.93</td><td>68.45</td></tr>
+                  <tr><td class="l">Dynamic</td><td>70.53</td><td>62.42</td><td>66.93</td><td>68.46</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .16s">
+          <div class="label">扩展任务（GSM8K / Multi-30k）</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l"></th><th class="l">Dataset</th><th>Ours</th><th>SAR</th><th>SE</th></tr>
+              </thead>
+              <tbody>
+                <tr><th class="l g" rowspan="2" scope="rowgroup">Qwen-7B</th><td class="l">GSM8K</td><td><strong>70.56</strong></td><td>60.41</td><td>57.83</td></tr>
+                <tr><td class="l">Multi-30k</td><td><strong>83.41</strong></td><td>75.38</td><td>73.41</td></tr>
+              </tbody>
+              <tbody>
+                <tr><th class="l g" rowspan="2" scope="rowgroup">Llama-8B</th><td class="l">GSM8K</td><td><strong>71.43</strong></td><td>65.41</td><td>60.31</td></tr>
+                <tr><td class="l">Multi-30k</td><td><strong>85.83</strong></td><td>78.66</td><td>79.05</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="takeaway">
+            <span class="tag">结论</span>
+            <p>SSS 与 CCS 单用都明显下降，二者<span class="hl">互补</span>；最高熵 head 的注意力聚合优于均值与逐样本动态选择。方法不限于 QA——GSM8K / Multi-30k 同样领先（Llama-8B 85.83 vs SAR 78.66）。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================================================================ 04 project -->
+<section id="project">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">04</div>
+    <div class="wrap">
+      <span class="badge reveal">项目</span>
+      <h2 class="reveal">基于大模型的搜索广告相关性优化</h2>
+      <p class="sub reveal">两阶段框架：从领域知识注入与推理能力对齐到轻量化蒸馏</p>
+      <div class="stats reveal">
+        <div class="stat"><b>98.6%</b><span>轻量级 6 层 BERT 保留 Teacher 模型的性能 (Macro F1)</span></div>
+        <div class="stat"><b>+0.91%</b><span>线上 A/B 实验 CTR 提升</span></div>
+        <div class="stat"><b>+1.06%</b><span>线上 A/B 实验 CVR 提升</span></div>
+        <div class="stat"><b>−30.5%</b><span>全量上线后服务零售广告 Badcase@5</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="project-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.1</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>服务零售场景挑战和需求</h3></div>
+      </header>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="no">01</div>
+          <h4>供给非标准化</h4>
+          <p>与具备<span class="hl">标准化结构属性</span>的电商商品不同，服务零售行业的商户经营方式灵活，命名描述多样、服务边界模糊，<span class="hl">缺乏统一的结构化信息</span>。</p>
+        </article>
+        <article class="card reveal" style="--d: .08s">
+          <div class="no">02</div>
+          <h4>判别标准与尺度多样</h4>
+          <p>不同行业在业态与经营模式上<span class="hl">差异显著</span>，导致相关性判断需依赖<span class="hl">具体场景与隐含规则</span>，难以建立统一标准。</p>
+        </article>
+        <article class="card key reveal" style="--d: .16s">
+          <div class="no">03</div>
+          <h4>相关性模型需具备</h4>
+          <p><span class="hl">丰富的平台领域知识</span>（涵盖商品特性、行业认知与业务规则）与<span class="hl">细粒度的语义理解能力</span>（对齐人类专家判断逻辑）。同时，为满足线上<span class="hl">高并发与实时性</span>的要求，模型还必须<span class="hl">轻量化</span>，以支持线上部署。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.2</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>两阶段框架：从<span class="hl">领域知识注入与推理能力对齐</span>到<span class="hl">轻量化蒸馏</span></h3></div>
+      </header>
+      <div class="stages reveal">
+        <div class="stage">
+          <div class="stage-no">第一阶段</div>
+          <h4>领域知识注入与推理能力对齐</h4>
+          <div class="pair">
+            <div class="box"><div class="tag">问题</div><ul><li>数据标注成本高！</li><li>通用模型领域适配能力不足！</li></ul></div>
+            <div class="down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M6 13l6 6 6-6"/></svg></div>
+            <div class="box solution"><div class="tag">方案</div><ul><li>对模型进行领域适配</li><li>提高特定任务推理能力</li></ul></div>
+          </div>
+        </div>
+        <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg></div>
+        <div class="stage">
+          <div class="stage-no">第二阶段</div>
+          <h4>轻量化蒸馏</h4>
+          <div class="pair">
+            <div class="box"><div class="tag">问题</div><ul><li>推理大模型无法满足线上轻量化部署和时延要求</li></ul></div>
+            <div class="down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v15"/><path d="M6 13l6 6 6-6"/></svg></div>
+            <div class="box solution"><div class="tag">方案</div><ul><li>蒸馏推理大模型性能到小模型</li></ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.3</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>第一阶段：领域知识注入与推理能力对齐</h3></div>
+      </header>
+      <figure class="fig reveal">
+        <img src="assets/proj-stage1.png" alt="第一阶段：领域知识注入与推理能力对齐总览" width="1187" height="574" loading="lazy" decoding="async">
+      </figure>
+      <div class="steps reveal" style="--n: 3">
+        <div class="step"><h5>领域知识注入</h5><p>首先是使用大规模任务数据（主要来自日志）对开源基座模型进行微调以注入平台所需的知识。</p></div>
+        <div class="step"><h5>推理能力对齐</h5><p>然后用高质量人工标注的推理数据进行微调，初步具备推理能力。</p></div>
+        <div class="step"><h5>强化学习优化</h5><p>最后再构造奖励函数，进行强化学习优化。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.4</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>第一阶段：推理大模型领域适配和优化</h3></div>
+      </header>
+      <div class="grid-5-7 center">
+        <div class="panel reveal">
+          <div class="label">持续预训练和监督微调</div>
+          <figure class="fig">
+            <img src="assets/proj-cpt-sft.png" alt="持续预训练和监督微调流程" width="899" height="446" loading="lazy" decoding="async">
+          </figure>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">七种任务类型</div>
+          <div class="table-card">
+            <table class="task-table">
+              <thead>
+                <tr><th>模块名称 (任务)</th><th>输入 (Input)</th><th>输出 (Output)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>查询理解<small>Query Understanding</small></td><td>用户搜索的 query</td><td>用户意图的自然语言解释</td></tr>
+                <tr><td>服务理解<small>Service Understanding</small></td><td>具体服务</td><td>服务内容及业务属性的解释</td></tr>
+                <tr><td>查询到服务映射<small>Query2Service</small></td><td>query</td><td>预测用户可能点击的服务</td></tr>
+                <tr><td>服务到查询映射<small>Service2Query</small></td><td>服务</td><td>该服务可能被点击的用户查询</td></tr>
+                <tr><td>Pointwise 相关性判断<small>Relevance Pointwise</small></td><td>query 和 service</td><td>二者是否相关的判断</td></tr>
+                <tr><td>Pairwise 相关性判断<small>Relevance Pairwise</small></td><td>query 和两组 service</td><td>更相关的 service</td></tr>
+                <tr><td>Listwise 相关性判断<small>Relevance Listwise</small></td><td>query 和多个 service</td><td>最相关的 service</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="note mt reveal">
+        <p>首先为<span class="hl">持续预训练</span>注入平台领域知识，为后续的复杂推理打下知识基础。用能力更强的 LLM（DeepSeek-R1，GPT-4.1，Qwen3-235B-A22B 等），并结合线上点击日志，进行<span class="hl">自动化标注</span>（以查询理解任务为例，我们引入 query 下的 top 点击 service 信息来帮助 LLM 更好的理解 query，以生成符合平台特性的意图理解数据），构建了一个涵盖搜索相关性核心子任务的语料库，含<span class="hl">数百万条</span>样本，共涉及上表<span class="hl">七种任务类型</span>以供训练。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.5</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>第一阶段：领域知识注入与推理能力对齐 · 奖励模型</h3></div>
+      </header>
+      <div class="label reveal">评估维度</div>
+      <div class="dims">
+        <div class="dim reveal"><div class="no">01</div><h5>查询理解</h5><p>对用户搜索意图的把握是否准确</p></div>
+        <div class="dim reveal" style="--d: .05s"><div class="no">02</div><h5>服务理解</h5><p>对服务核心属性（适用对象，履约方式）等描述是否准确</p></div>
+        <div class="dim reveal" style="--d: .1s"><div class="no">03</div><h5>业务规则遵循</h5><p>相关性判断是否符合平台业务规则逻辑</p></div>
+        <div class="dim reveal" style="--d: .15s"><div class="no">04</div><h5>推理一致性</h5><p>推理理由是否能支撑最终答案</p></div>
+        <div class="dim reveal" style="--d: .2s"><div class="no">05</div><h5>答案正确性</h5><p>生成的答案是否与真实标签一致</p></div>
+      </div>
+      <div class="note mt reveal">
+        <p>此后需要构建一个高质量的<span class="hl">专家标注数据集</span>供奖励模型训练。对于给定的 &lt;query，service&gt;，使用多个通用 LLM 生成 &lt;reason，answer&gt;，从中<span class="hl">随机采样</span>以覆盖<span class="hl">不同的推理风格</span>与<span class="hl">潜在的错误模式</span>。借鉴人类专家的相关性标注推理思路，将推理过程分成上表 5 个维度，并由人类专家对每个生成结果进行<span class="hl">标注得分</span>。随后使用 <span class="hl">GRPO 算法</span>进行模型训练。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.6</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>领域知识注入与推理能力对齐实验结果</h3></div>
+      </header>
+      <div class="grid-6-6 center">
+        <div class="table-card reveal">
+          <table class="rt">
+            <thead>
+              <tr><th class="l">Method</th><th>Accuracy</th><th>Macro F1</th><th>Weight F1</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="l">Qwen3-8B (Zero-shot)</td><td>0.5480</td><td>0.3955</td><td>0.5748</td></tr>
+              <tr><td class="l">Qwen3-8B (Few-shot)</td><td>0.5893</td><td>0.4375</td><td>0.6254</td></tr>
+              <tr><td class="l">DeepSeek-R1 (Zero-shot)</td><td>0.5140</td><td>0.4067</td><td>0.5827</td></tr>
+              <tr><td class="l">DeepSeek-R1 (Few-shot)</td><td>0.6197</td><td>0.4696</td><td>0.6638</td></tr>
+            </tbody>
+            <tbody>
+              <tr><td class="l">SFT Baseline</td><td>0.7708</td><td>0.6980</td><td>0.7485</td></tr>
+              <tr><td class="l">CPT+SFT</td><td>0.7762</td><td>0.7032</td><td>0.7538</td></tr>
+              <tr><td class="l">+ GRPO (<i>R</i><sub>label</sub>)</td><td>0.7812</td><td>0.7101</td><td>0.7634</td></tr>
+              <tr class="em"><td class="l">+ GRPO (Weighted)</td><td>0.7873</td><td>0.7174</td><td>0.7701</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note reveal" style="--d: .08s">
+          <h4>消融实验证明：</h4>
+          <ol>
+            <li><span class="hl">通用 LLM</span> 无法直接完成平台相关性判断任务，证明领域适配的重要性</li>
+            <li>模型的性能随着训练阶段的增加而稳步提升。与单纯的就基线相比，引入 <span class="hl">CPT</span> 带来了明显的增益。在此基础上，<span class="hl">GRPO</span> 优化能进一步放大模型潜力，但<span class="hl">仅优化答案正确性</span>的 <i>R</i><sub>label</sub> 收益有限</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-7">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.7</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>第二阶段：轻量化蒸馏 · 传统思路</h3></div>
+      </header>
+      <div class="grid-5-7 center">
+        <figure class="fig reveal">
+          <img src="assets/proj-traditional.png" alt="传统推理能力蒸馏思路" width="525" height="408" loading="lazy" decoding="async">
+        </figure>
+        <div class="note reveal" style="--d: .08s">
+          <h4>传统推理能力蒸馏思路：</h4>
+          <ol>
+            <li>通过句子嵌入模型提取推理路径的表征；</li>
+            <li>BERT 模型的 [CLS] 与该嵌入对齐</li>
+          </ol>
+          <h4>劣势：</h4>
+          <p>忽视了嵌入模型与 BERT 原本的表征差异，且引入额外的线性投影层增大了推理监督信号的过程损耗（即模型偷懒）。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-8">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.8</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>第二阶段：轻量化蒸馏 · 对比自蒸馏</h3></div>
+      </header>
+      <div class="grid-6-6">
+        <div class="panel reveal">
+          <div class="label">对比自蒸馏 (CRSD)</div>
+          <figure class="fig">
+            <img src="assets/proj-crsd.png" alt="对比自蒸馏 CRSD 框架" width="585" height="328" loading="lazy" decoding="async">
+          </figure>
+          <div class="takeaway">
+            <span class="tag">方案</span>
+            <p>因此二阶段引入了<span class="hl">对比自蒸馏</span>的方案，一方面要求<span class="hl">分类尽可能准</span>，另一方面要求学生模型的输出表征要和教师模型的输出<span class="hl">表征要尽可能拉近</span>，在此期间教师也进行学习以保证其更好的表征学习。</p>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="panel reveal" style="--d: .08s">
+            <div class="label">推理数据样例</div>
+            <div class="table-card">
+              <table class="case">
+                <tbody>
+                  <tr><th>Query</th><td>Freshly-made cocktail</td></tr>
+                  <tr><th>Service</th><td><b>Name:</b> Jiu Xiang Homebar<br><b>Tags:</b> cocktail set, single cocktail, whiskey coke bucket, all-you-can-drink, ...</td></tr>
+                  <tr><th>Reasoning</th><td>The user’s query “Freshly-made cocktail” implies an intent for on-site preparation. The service, a ’Homebar’, not only explicitly mentions ’cocktail set’ but also belongs to the ’Bar’ category. The key inference is that cocktails in a bar context are inherently made-to-order, thus satisfying the ’freshly-made’ requirement... Therefore, the service is highly relevant.</td></tr>
+                  <tr><th>Label</th><td>2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel reveal" style="--d: .16s">
+            <div class="label">训练目标</div>
+            <div class="formulas">
+              <div class="formula">
+                <math display="block">
+                  <msub><mi>ℒ</mi><mi>sce</mi></msub><mo>=</mo><mi>CE</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>s</mi></msub><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo><mo separator="true">,</mo><mspace width="0.6em"></mspace>
+                  <msub><mi>ℒ</mi><mi>tce</mi></msub><mo>=</mo><mi>CE</mi><mo stretchy="false">(</mo><msub><mi>y</mi><mi>r</mi></msub><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo>
+                </math>
+              </div>
+              <div class="formula">
+                <math display="block">
+                  <msub><mi>ℒ</mi><mi>align</mi></msub><mo>=</mo><mo>−</mo>
+                  <munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover>
+                  <mi>log</mi><mspace width="0.25em"></mspace>
+                  <mfrac>
+                    <mrow><mi>exp</mi><mo stretchy="false">(</mo><mi>sim</mi><mo stretchy="false">(</mo><msub><mi>cls</mi><mi>i</mi></msub><mo>,</mo><msub><mi>cls</mi><msub><mi>r</mi><mi>i</mi></msub></msub><mo stretchy="false">)</mo><mo>/</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow>
+                    <mrow><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mi>exp</mi><mo stretchy="false">(</mo><mi>sim</mi><mo stretchy="false">(</mo><msub><mi>cls</mi><mi>i</mi></msub><mo>,</mo><msub><mi>cls</mi><msub><mi>r</mi><mi>j</mi></msub></msub><mo stretchy="false">)</mo><mo>/</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow>
+                  </mfrac>
+                </math>
+              </div>
+              <div class="formula">
+                <math display="block">
+                  <msub><mi>ℒ</mi><mi>CRSD</mi></msub><mo>=</mo><msub><mi>ℒ</mi><mi>sce</mi></msub><mo>+</mo><mi>γ</mi><msub><mi>ℒ</mi><mi>tce</mi></msub><mo>+</mo><mi>δ</mi><msub><mi>ℒ</mi><mi>align</mi></msub>
+                </math>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="project-9">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">4.9</span>
+        <div><p class="kicker">基于大模型的搜索广告相关性优化</p><h3>轻量化蒸馏实验结果</h3></div>
+      </header>
+      <div class="evidence">
+        <div class="evidence-row reveal">
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Method</th><th>Accuracy</th><th>Macro F1</th><th>Weight F1</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="l">Baseline</td><td>0.7645</td><td>0.6945</td><td>0.7461</td></tr>
+                <tr><td class="l">Baseline Reasoning Distill.</td><td>0.7678</td><td>0.6959</td><td>0.7486</td></tr>
+                <tr><td class="l">CRSD + <i>ℒ</i><sub>align</sub></td><td>0.7707</td><td>0.6993</td><td>0.7522</td></tr>
+                <tr class="em"><td class="l">CRSD Full (ours)</td><td>0.7761</td><td>0.7076</td><td>0.7583</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="claim"><span class="n">1</span><p>CRSD 方法优于传统标签蒸馏和嵌入对齐蒸馏基线，轻量级 6 层 BERT 成功保留了 Teacher 模型 98.6% 的性能 (Macro F1)。</p></div>
+        </div>
+        <div class="evidence-row reveal">
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Method</th><th>Accuracy</th><th>Macro F1</th><th>Weight F1</th></tr>
+              </thead>
+              <tbody>
+                <tr class="em"><td class="l">CRSD Full(Ours)</td><td>0.7761</td><td>0.7076</td><td>0.7583</td></tr>
+              </tbody>
+              <tbody>
+                <tr><td class="l">w/o Reasoning Path</td><td>0.7639</td><td>0.6947</td><td>0.7463</td></tr>
+                <tr><td class="l">w/ Random Reasoning</td><td>0.7624</td><td>0.6918</td><td>0.7440</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="claim"><span class="n">2</span><p><span class="hl">移除推理路径</span>或使用<span class="hl">随机推理</span>均导致性能下降，证明收益来源于推理逻辑的内化而非<span class="hl">噪声</span>带来的增益。</p></div>
+        </div>
+        <div class="evidence-row reveal">
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l">Model</th><th>AdCTR</th><th>AdCVR</th><th>GTV</th><th>UVCTR</th><th>PVCTR</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="l">online</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr class="em"><td class="l">Ours</td><td>+0.91%</td><td>+1.06%</td><td>+0.40%</td><td>+0.11%</td><td>+0.18%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="claim"><span class="n">3</span><p>相较于 Base 组（仅数据蒸馏 BERT），线上 A/B 实验收益显著，CTR 提升 0.91%，CVR 提升 1.06%，ACP 同提升 0.35%。全量上线后，服务零售广告主区 Badcase@5 降低 30.5%。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="logos">
+      <span><img src="assets/logo-nuaa.jpg" alt="南京航空航天大学校徽" width="250" height="250"></span>
+      <span><img src="assets/logo-ai.png" alt="学院标识" width="509" height="511"></span>
+      <span><img src="assets/logo-nlp.png" alt="NUAA NLP" width="250" height="250"></span>
+    </div>
+    <a class="brand" href="#top">Interview</a>
+    <a class="to-top" href="#top">回到顶部 ↑</a>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

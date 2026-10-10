@@ -1737,8 +1737,7 @@
       <p class="sub reveal">Top VV 高热 Grade 3 · 人机协同 Policy · 自进化审核 Agent</p>
       <div class="stats reveal">
         <div class="stat"><b>≈ 人标</b><span>Grade 3 Agent 替代人工标注，大流量实验中与人标组线上表现基本持平</span></div>
-        <div class="stat"><b>−0.79%</b><span>推全模型口径 model ENVR（新方案 v3 相对对照组）</span></div>
-        <div class="stat"><b>−3.59%</b><span>剔除非原创后的 model ENVR（v3 相对对照组）</span></div>
+        <div class="stat"><b>−0.79%</b><span>Model ENVR（新方案 v3 相对对照组）</span></div>
         <div class="stat"><b>+0.03%</b><span>人均停留时长 SD 正向显著，HLT 持平，没有用消费换治理</span></div>
       </div>
     </div>
@@ -1892,8 +1891,7 @@
             <tr><th>指标</th><th>含义与口径</th><th>方向</th></tr>
           </thead>
           <tbody>
-            <tr><td>Model ENVR<small>推全模型口径</small></td><td>用已推全的旧模型判定负向内容。model ENVR ＝ 负向 VV（非原创、PQC、Clickbait、BFS、IPC 去重合并）÷ 非广告公开内容 VV；“剔除非原创”版本用来观察其余问题的综合变化。</td><td>越低越好</td></tr>
-            <tr><td>Test Model ENVR<small>新模型口径</small></td><td>用待评估的新模型判定负向内容，按 issue 拆分；本实验看视频口径，不含图文。</td><td>越低越好</td></tr>
+            <tr><td>Model ENVR<small>推全模型口径</small></td><td>用已推全的模型判定负向内容：负向 VV（非原创、PQC、Clickbait、BFS、IPC 去重合并）÷ 非广告公开内容 VV。</td><td>越低越好</td></tr>
             <tr><td>SD<small>StayDuration/U</small></td><td>人均停留时长：Session 停留时长之和 ÷ 进组用户数。</td><td>越高越好</td></tr>
             <tr><td>HLT<small>Active Hours</small></td><td>人均有效活跃小时数：有效 Session 贡献的活跃小时数之和 ÷ 进组用户数，不是观看时长换算。</td><td>越高越好</td></tr>
           </tbody>
@@ -1901,7 +1899,7 @@
       </div>
       <div class="takeaway reveal">
         <span class="tag">解读</span>
-        <p>两套 ENVR 同向改善，证据更强；只有 Test Model 改善时，要警惕“新模型衡量新策略”的同源效应。SD、HLT 作为消费护栏，确认治理收益没有以用户消费为代价。</p>
+        <p>Model ENVR 用已推全的模型作为统一的尺子，比较各组线上负向内容的占比；SD、HLT 作为消费护栏，确认治理收益没有以用户消费为代价。</p>
       </div>
     </div>
   </section>
@@ -1915,21 +1913,21 @@
       <div class="table-card reveal">
         <table class="rt">
           <thead>
-            <tr><th class="l" rowspan="2">组别（相对对照组）</th><th class="span" colspan="2">Model ENVR（推全模型）</th><th class="span" colspan="3">Test Model ENVR（新模型 · 视频 VV%）</th><th class="span" colspan="2">消费护栏</th></tr>
-            <tr><th>model ENVR</th><th>剔除非原创</th><th>非原创</th><th>Clickbait</th><th>BFS</th><th>SD</th><th>HLT</th></tr>
+            <tr><th class="l" rowspan="2">组别（相对对照组）</th><th rowspan="2">Model ENVR</th><th class="span" colspan="2">消费护栏</th></tr>
+            <tr><th>SD</th><th>HLT</th></tr>
           </thead>
           <tbody>
-            <tr><td class="l">反转组：下线高热机审与人审</td><td>+1.89%</td><td>+2.94%</td><td>+2.83%</td><td>+2.97%</td><td>+13.06%</td><td>+0.418%</td><td>+0.083%</td></tr>
-            <tr><td class="l">v1：issue 模型机标，下线人审</td><td>+0.18%</td><td>−2.24%</td><td>−0.67%</td><td>−7.42%</td><td>−1.66%</td><td>+0.338%</td><td>+0.073%</td></tr>
-            <tr><td class="l">v2：issue 模型机标 + Grade 3 人标</td><td>−0.75%</td><td>−3.59%</td><td>−1.75%</td><td>−8.34%</td><td>−9.04%</td><td><span class="ns">+0.006%</span></td><td><span class="ns">+0.002%</span></td></tr>
-            <tr class="em"><td class="l">v3：issue 模型机标 + Grade 3 Agent 标</td><td>−0.79%</td><td>−3.59%</td><td>−1.80%</td><td>−8.36%</td><td>−9.16%</td><td>+0.029%</td><td><span class="ns">+0.007%</span></td></tr>
+            <tr><td class="l">反转组：下线高热机审与人审</td><td>+1.89%</td><td>+0.418%</td><td>+0.083%</td></tr>
+            <tr><td class="l">v1：下线高热机审 + 人审，上线 issue 模型机标</td><td>+0.18%</td><td>+0.338%</td><td>+0.073%</td></tr>
+            <tr><td class="l">v2：下线高热机审，上线 issue 模型机标（保留 Grade 3 人标）</td><td>−0.75%</td><td><span class="ns">+0.006%</span></td><td><span class="ns">+0.002%</span></td></tr>
+            <tr class="em"><td class="l">v3：下线高热机审 + Grade 3 人标，上线 issue 模型机标 + Grade 3 Agent 标</td><td>−0.79%</td><td>+0.029%</td><td><span class="ns">+0.007%</span></td></tr>
           </tbody>
         </table>
       </div>
       <p class="fineprint">ENVR 越低越好，SD、HLT 越高越好；灰色为不显著（显著性水平 5%），其余均显著。数据取 Libra 报告默认口径，窗口 2026-09-04 至 09-08。</p>
       <ol class="obs mt">
-        <li class="reveal"><span class="n">1</span><p><b>v3 相对对照组：</b>推全模型与新模型两套 ENVR 口径同向显著下降，SD 微升、HLT 持平，没有用消费换治理。</p></li>
-        <li class="reveal"><span class="n">2</span><p><b>v3 相对 v2：</b>差异接近零（model ENVR 再降约 0.04%，SD 略升，BFS 在推全模型口径下小幅反向），说明 Grade 3 Agent 能以基本等效的线上表现替代人工标注；治理收益主要来自两组共有的 issue 模型机标。</p></li>
+        <li class="reveal"><span class="n">1</span><p><b>v3 相对对照组：</b>Model ENVR 显著下降 0.79%，SD 微升、HLT 持平，没有用消费换治理。</p></li>
+        <li class="reveal"><span class="n">2</span><p><b>v3 相对 v2：</b>差异接近零（Model ENVR 再降约 0.04%，SD 略升），说明 Grade 3 Agent 能以基本等效的线上表现替代人工标注；治理收益主要来自两组共有的 issue 模型机标。</p></li>
         <li class="reveal"><span class="n">3</span><p><b>反转组：</b>ENVR 明显上升，同时 SD、HLT 上升，说明高热治理本身有消费代价；v3 的治理力度比现状更强（ENVR 更低），SD、HLT 却没有进一步下降。</p></li>
       </ol>
     </div>

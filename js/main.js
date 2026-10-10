@@ -53,13 +53,20 @@
   }
   window.addEventListener("beforeprint", () => reveals.forEach((el) => el.classList.add("in")));
 
-  /* ------------------------------------------------ lightbox */
+  /* ------------------------------------------------ lightbox (figures and example videos) */
   const box = document.createElement("div");
   box.className = "lightbox";
-  box.innerHTML = '<img alt="">';
+  box.innerHTML = '<img alt=""><video controls playsinline></video><p class="lb-cap"></p>';
   document.body.appendChild(box);
   const boxImg = box.querySelector("img");
-  const closeBox = () => box.classList.remove("open");
+  const boxVideo = box.querySelector("video");
+  const boxCap = box.querySelector(".lb-cap");
+  const closeBox = () => {
+    box.classList.remove("open", "is-video");
+    boxVideo.pause();
+    boxVideo.removeAttribute("src");
+    boxVideo.load();
+  };
 
   document.querySelectorAll(".fig img").forEach((img) => {
     img.addEventListener("click", () => {
@@ -68,7 +75,30 @@
       box.classList.add("open");
     });
   });
-  box.addEventListener("click", closeBox);
+
+  document.querySelectorAll("[data-video]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      boxVideo.src = btn.dataset.video;
+      boxCap.textContent = btn.dataset.caption || "";
+      box.classList.add("open", "is-video");
+      boxVideo.play().catch(() => {});
+    });
+    // a missing video file leaves the text caption on its own
+    const thumb = btn.querySelector("video");
+    const markMissing = () => btn.closest(".ex").classList.add("no-media");
+    thumb.addEventListener("error", markMissing);
+    if (thumb.error || thumb.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) markMissing();
+    // first frames are often black; show the frame at ~1s as the thumbnail
+    const seekPoster = () => {
+      if (thumb.currentTime < 0.5) thumb.currentTime = Math.min(1, thumb.duration / 3 || 0);
+    };
+    if (thumb.readyState >= 1) seekPoster();
+    else thumb.addEventListener("loadedmetadata", seekPoster, { once: true });
+  });
+
+  box.addEventListener("click", (e) => {
+    if (e.target !== boxVideo) closeBox();
+  });
 
   /* ------------------------------------------------ presenter stepping
      PageDown / Space / → jump to the next section start; a section taller
@@ -138,6 +168,14 @@
     if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
 
     if (box.classList.contains("open")) {
+      // a focused <video> handles its own space / arrow keys
+      if (e.target === boxVideo && e.key !== "Escape") return;
+      if (e.key === " " && box.classList.contains("is-video")) {
+        e.preventDefault();
+        if (boxVideo.paused) boxVideo.play();
+        else boxVideo.pause();
+        return;
+      }
       if (["Escape", " ", "Enter", "PageDown", "PageUp", "ArrowLeft", "ArrowRight"].includes(e.key)) {
         e.preventDefault();
         closeBox();

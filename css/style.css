@@ -1323,20 +1323,79 @@ math {
 }
 
 .cls-table td:first-child {
-  width: 230px;
+  width: 200px;
 }
 
 .cls-table td:nth-child(2) {
-  width: 32%;
+  width: 24%;
 }
 
-.cls-table ul {
+.examples {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px;
+}
+
+.ex {
   margin: 0;
-  padding-left: 1.1em;
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 12px;
+  align-items: start;
 }
 
-.cls-table li + li {
-  margin-top: 6px;
+.ex-media {
+  position: relative;
+  width: 84px;
+  height: 112px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 6px 16px -8px rgba(14, 26, 43, 0.55);
+}
+
+.ex-media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.ex-media::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M3.5 1.8v8.4l7-4.2z' fill='%230c4ca0'/></svg>") center / 13px no-repeat;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.ex-media:hover::after,
+.ex-media:focus-visible::after {
+  transform: scale(1.12);
+}
+
+.ex figcaption {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.ex.no-media {
+  grid-template-columns: 1fr;
+}
+
+.ex.no-media .ex-media {
+  display: none;
 }
 
 /* ---------------------------------------------------------------- model cards */
@@ -1625,6 +1684,40 @@ math {
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.lightbox video,
+.lightbox .lb-cap {
+  display: none;
+}
+
+.lightbox.is-video {
+  align-content: center;
+  gap: 16px;
+}
+
+.lightbox.is-video img {
+  display: none;
+}
+
+.lightbox.is-video video {
+  display: block;
+  width: auto;
+  height: 80vh;
+  max-width: 92vw;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  cursor: auto;
+}
+
+.lightbox.is-video .lb-cap {
+  display: block;
+  max-width: 80vw;
+  font-size: 16px;
+  line-height: 1.7;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.86);
 }
 
 /* ---------------------------------------------------------------- reveal */

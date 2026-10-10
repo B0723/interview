@@ -16,6 +16,7 @@
       <a href="#acl"><b>02</b><span>DUD 解耦式 UQ</span></a>
       <a href="#aaai"><b>03</b><span>Sampling-Free UQ</span></a>
       <a href="#project"><b>04</b><span>搜索广告相关性优化</span></a>
+      <a href="#bytedance"><b>05</b><span>非原创内容识别</span></a>
     </div>
   </div>
   <div class="progress"></div>
@@ -55,6 +56,12 @@
         <span class="venue">项目</span>
         <span class="t">基于大模型的搜索广告相关性优化</span>
         <span class="s">从领域知识注入与推理能力对齐到轻量化蒸馏</span>
+      </a>
+      <a href="#bytedance">
+        <span class="num">05</span>
+        <span class="venue">项目 · 字节跳动</span>
+        <span class="t">非原创内容识别</span>
+        <span class="s">级联多模态识别 · 多 teacher 驱动迭代</span>
       </a>
     </div>
   </div>
@@ -1270,6 +1277,347 @@
           </div>
           <div class="claim"><span class="n">3</span><p>相较于 Base 组（仅数据蒸馏 BERT），线上 A/B 实验收益显著，CTR 提升 0.91%，CVR 提升 1.06%，ACP 同提升 0.35%。全量上线后，服务零售广告主区 Badcase@5 降低 30.5%。</p></div>
         </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================================================================ 05 ByteDance -->
+<section id="bytedance">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">05</div>
+    <div class="wrap">
+      <span class="badge reveal">项目 · 字节跳动</span>
+      <h2 class="reveal">非原创内容识别</h2>
+      <p class="sub reveal">相似视频召回与配对 · 级联多模态识别 · 多 teacher 驱动迭代</p>
+      <div class="stats reveal">
+        <div class="stat"><b>80%</b><span>视频 / 图文离线 issue × grade 精确率（基线 57% / 59%）</span></div>
+        <div class="stat"><b>76%</b><span>视频离线 issue × grade F1（基线 59%）</span></div>
+        <div class="stat"><b>约 −28%</b><span>RoW / US 非原创视频曝光占比（Test Model ENVR，相对对照组）</span></div>
+        <div class="stat"><b>约 −17%</b><span>RoW 非原创图文曝光占比（Test Model ENVR，相对对照组）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="bytedance-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.1</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>任务定义：非原创五分类</h3></div>
+      </header>
+      <div class="grid-4-8 center">
+        <div class="stack reveal">
+          <div class="note">
+            <p><b>非原创</b>指使用他人素材、缺乏实质性新增贡献（信息增量或剪辑价值）的内容，包括完全搬运（Total Copied，TC）和低成本二创（Low Cost，LC）。</p>
+            <p>模型依据内容判定规则（Policy）进行<b>五分类</b>，分类结果对应不同的治理方式：</p>
+          </div>
+          <div class="gov">
+            <div class="gov-item issue"><div class="tag">纳入治理（3 类）</div><p>站内 TC、站外 TC 对应一级治理（Grade 1），LC 对应二级治理（Grade 2），以减少非原创内容的推荐曝光。</p></div>
+            <div class="gov-item"><div class="tag">正常分发（2 类）</div><p>高成本二创（High Cost，HC）和原创／正常（Normal）。</p></div>
+          </div>
+        </div>
+        <figure class="fig reveal" style="--d: .08s">
+          <img src="assets/bd-taxonomy.png" alt="非原创五分类与对应的治理等级" width="1228" height="624" loading="lazy" decoding="async">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.2</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>五类判定示例</h3></div>
+      </header>
+      <div class="table-card reveal">
+        <table class="task-table cls-table">
+          <thead>
+            <tr><th>类别</th><th>简单定义</th><th>示例</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>完全搬运—站内TC<small>Total Copied (In-App Source)</small><span class="grade g1">Grade 1 · NFF</span></td>
+              <td>搬运 TikTok 站内他人内容，没有或几乎没有新增贡献。</td>
+              <td><ul><li>与站内相似视频主体内容一致，仅改变背景颜色</li><li>搬运哈利波特原片，包含 TikTok 水印</li></ul></td>
+            </tr>
+            <tr>
+              <td>完全搬运—站外TC<small>Total Copied (Out-of-App Source)</small><span class="grade g1">Grade 1</span></td>
+              <td>搬运站外他人内容，没有或几乎没有新增贡献。</td>
+              <td><ul><li>搬运 YouTube 上的知名动画（片名：Hammonnations）</li></ul></td>
+            </tr>
+            <tr>
+              <td>低成本二创<small>Low Cost，LC</small><span class="grade g2">Grade 2</span></td>
+              <td>使用他人素材并做简单加工，新增贡献有限，观众主要仍在消费原素材。</td>
+              <td><ul><li>低剪辑价值：仅在原视频后添加一个片段，没有形成新主题</li><li>低信息增量价值：给新闻加文字总结，信息增量低，消费的主要还是新闻的画面素材本身</li></ul></td>
+            </tr>
+            <tr>
+              <td>高成本二创<small>High Cost，HC</small><span class="grade ok">正常分发</span></td>
+              <td>使用他人素材，但通过解说、观点或剪辑重构，使新增贡献成为作品的主要价值。</td>
+              <td><ul><li>高剪辑价值：通过混剪介绍当前一级方程式赛车中获胜次数最多的十位车手</li><li>高信息增量价值：讲解名人八卦，虽然引用了名人照片，但因为提供了大量原创观点，信息增量价值很高</li></ul></td>
+            </tr>
+            <tr>
+              <td>原创／正常<small>Normal</small><span class="grade ok">正常分发</span></td>
+              <td>创作者原创，或经确认由内容正主发布的内容。</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.3</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>线上识别链路</h3></div>
+      </header>
+      <figure class="fig reveal">
+        <img src="assets/bd-pipeline.png" alt="线上识别链路：Dedup 召回、Pairwise 配对、SigLIP 小模型与 2B 模型级联识别" width="2279" height="604" loading="lazy" decoding="async">
+      </figure>
+      <div class="phases reveal">
+        <div class="phase"><div class="range">Dedup</div><p>召回相似视频候选 List</p></div>
+        <div class="phase"><div class="range">Pairwise</div><p>从候选 List 中，挑选唯一、最相似视频，输出对应的 Pair ID</p></div>
+        <div class="phase"><div class="range">SigLIP 小模型 → 2B 模型</div><p>SigLIP 小模型覆盖全量发文，VV&gt;300 时触发 2B 模型进一步识别（主要是为了平衡识别效果和 GPU 资源）</p></div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">说明</span>
+        <p>视频和图文是两条链路，模型不同、但链路结构完全一致。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.4</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型细节：Pairwise 与 SigLIP 小模型</h3></div>
+      </header>
+      <div class="models">
+        <article class="model reveal">
+          <div class="model-head"><span class="no">01</span><h4>Pairwise 模型</h4><span class="chip">相似配对</span></div>
+          <figure class="fig">
+            <img src="assets/bd-pairwise.png" alt="Pairwise 模型结构" width="2261" height="178" loading="lazy" decoding="async">
+          </figure>
+          <dl class="spec">
+            <div><dt>模型功能</dt><dd>基于“相似”比较当前视频与站内相似视频，产出最相似的 Top 1 作为 Pair ID；不考虑编辑价值等 Policy 定义</dd></div>
+            <div><dt>输入</dt><dd>两条视频的画面、音频、文本</dd></div>
+            <div><dt>输出</dt><dd>Pair ID + 站内 TC 分</dd></div>
+          </dl>
+        </article>
+        <article class="model reveal">
+          <div class="model-head"><span class="no">02</span><h4>SigLIP 小模型</h4><span class="chip">全量覆盖</span></div>
+          <figure class="fig">
+            <img class="scale-down" src="assets/bd-siglip.png" alt="SigLIP 小模型推理结构" width="2375" height="353" loading="lazy" decoding="async">
+          </figure>
+          <dl class="spec">
+            <div><dt>模型功能</dt><dd>以较低成本完成原创度分类，覆盖全量发文。</dd></div>
+            <div><dt>输入</dt><dd>图像：当前视频与 Pair 视频各均匀抽 8 帧<br>文本：title、sticker、ASR、OCR</dd></div>
+            <div><dt>输出</dt><dd>Normal、HC、LC、站外 TC、站内 TC 五类分数</dd></div>
+            <div><dt>模型效果</dt><dd>在不同测试集上 issue × grade ≈ PR60</dd></div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.5</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型细节：多模态大模型（Qwen-based）</h3></div>
+      </header>
+      <div class="models">
+        <article class="model reveal">
+          <div class="model-head"><span class="no">03</span><h4>多模态大模型（Qwen-based）</h4><span class="chip">VV&gt;300 触发</span></div>
+          <figure class="fig">
+            <img src="assets/bd-qwen.png" alt="基于 Qwen3-VL 2B 的多模态大模型结构" width="2408" height="297" loading="lazy" decoding="async">
+          </figure>
+          <dl class="spec">
+            <div><dt>模型功能</dt><dd>基于 Qwen3-VL 2B，结合当前视频与相似候选的多模态信息，判断搬运及二创贡献</dd></div>
+            <div><dt>输入</dt><dd>当前视频与候选视频各 18 帧，以及 title、sticker_text、ASR、OCR 和用户名。</dd></div>
+            <div><dt>输出</dt><dd>读取首个输出 token 的五类分数，经 Softmax 转为 Normal、HC、LC、站外 TC、站内 TC 五类概率。</dd></div>
+            <div><dt>模型效果</dt><dd>在不同测试集上 issue × grade ≈ PR80</dd></div>
+          </dl>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.6</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型训练：挑战与整体思路</h3></div>
+      </header>
+      <div class="label reveal">挑战</div>
+      <div class="cards">
+        <article class="card reveal"><div class="no">01</div><p>人工标注量少、噪声高、产出慢，难以支撑训练集标注。</p></article>
+        <article class="card reveal" style="--d: .08s"><div class="no">02</div><p>Policy 大版本更新后，需在无配套训练集的情况下，2 周内完成模型训练与上线。</p></article>
+        <article class="card reveal" style="--d: .16s"><div class="no">03</div><p>Agent 短期内难以提供符合新 Policy、可直接用于蒸馏的可靠监督。</p></article>
+      </div>
+      <div class="label mt reveal">整体思路</div>
+      <div class="grid-2 reveal">
+        <div class="flow-box solution rich"><h4>持续扩召补覆盖</h4><p>根据每轮评估暴露的薄弱类型持续扩召，围绕客观证据 Agent 按需合成，让数据构建贯穿训练。</p></div>
+        <div class="flow-box solution rich"><h4>多 teacher 清洗提质量</h4><p>通过不同分布上采样形成互补 teacher，反复清洗存量与新增数据，减少噪声和单一 teacher 的偏差。</p></div>
+      </div>
+      <figure class="fig mt reveal">
+        <img src="assets/bd-training.png" alt="持续数据扩召与多 teacher 清洗的训练闭环" width="2380" height="842" loading="lazy" decoding="async">
+      </figure>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-7">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.7</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>数据构建：持续扩召、按需合成</h3></div>
+      </header>
+      <div class="grid-2">
+        <article class="method reveal">
+          <h4>多路扩召</h4>
+          <div class="part"><div class="k">怎么做</div><p>围绕目标类型与每轮评估 badcase，持续通过<b>内容相似检索、作者历史发文</b>等线索扩展候选数据，使训练数据更接近目标分布。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>随机采样和单一路径难以覆盖目标类型；持续扩召能随模型迭代补齐新的覆盖缺口，提高有效样本占比。</p></div>
+        </article>
+        <article class="method reveal" style="--d: .08s">
+          <h4>Agent 合成</h4>
+          <div class="part"><div class="k">怎么做</div><p>针对水印等有客观证据的规则，控制关键条件，合成<b>正例、反例和难例</b>，例如改变水印与作者身份的匹配关系。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>客观证据使标签可核验，也便于构造真实数据中稀疏的条件组合，让模型学会哪些证据决定标签，减少对表面特征的依赖。</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-8">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.8</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>清洗与训练：多 teacher 驱动迭代</h3></div>
+      </header>
+      <div class="note reveal">
+        <p>非原创规则涉及多层条件与信息增量判断，if-else 的逻辑较多导致边界较“不规则”；扩召的数据直接混训会带入噪声，逐条依赖高质量人工标注又难以规模化（且目前还没有一个 PR80 的 Agent 能用来直接蒸馏）。遂，通过<b>“持续扩召／按需合成 → 重标清洗 → SFT → 验证反馈”</b>反复迭代，并用多 teacher 改善 label 质量。</p>
+      </div>
+      <ol class="vsteps mt">
+        <li class="reveal">
+          <div>
+            <h5>训练互补 teacher：先保召回，再形成不同训练重点。</h5>
+            <p>以存量人工标注与初步清洗数据为起点，先保证召回能力，避免遗漏潜在正例；对不同分布分别上采样，提高它们在相应 teacher 训练中的占比，训练各有所长的 teacher，再按优势组合。</p>
+            <p>数据数量与标签质量不均时，单个混训 teacher 容易受主流分布和错误标签影响，对薄弱类型清洗不足。不同采样让各 teacher 重点学习不同类型，组合后互补，减少同一偏差在循环中延续。</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div>
+            <h5>重标清洗 → 训练下一轮模型。</h5>
+            <p>Agent 利用组合 teacher 构建标注策略，对候选训练集 relabel 和筛选，少量人工修正疑难样本；再用清洗后的数据 SFT 下一轮模型。</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div>
+            <h5>独立验证 → 反馈扩召与自清洗。</h5>
+            <p>每轮评估后，针对薄弱类型继续扩召、按需合成，并用更新后的模型清洗存量与新增数据，进入下一轮 SFT。</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-9">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.9</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>业务效果：离线指标口径</h3></div>
+      </header>
+      <div class="defs reveal">
+        <div class="def">
+          <h4>issue × grade</h4>
+          <p>按模型阈值与优先级得到最终预测，再按 <b>Grade1＝TC（站内＋站外）、Grade2＝LC、其他＝Normal／HC</b> 统计。同级命中计 TP，误报及 TC↔LC 错档计 FP，非原创被判为其他计 FN；本业务口径中，错档不再计 FN。</p>
+        </div>
+        <div class="def">
+          <h4>单头 P/R</h4>
+          <p>每个类别分别做“该类／非该类”二分类，分数达到阈值即判正。TC 总头合并站内、站外 TC，LC 头只看 LC。</p>
+        </div>
+      </div>
+      <div class="label mt reveal">计数与公式对照</div>
+      <figure class="fig reveal">
+        <img src="assets/bd-metrics.png" alt="issue × grade 与单头 P/R 的计数方式及 P、R、F1 公式" width="2412" height="781" loading="lazy" decoding="async">
+      </figure>
+      <p class="fineprint">口径均由 Policy 和 PM 同学定义。</p>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-10">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.10</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>业务效果：线上指标口径</h3></div>
+      </header>
+      <div class="envr reveal">
+        <div class="eq">核心指标 ENVR（Ecosystem Negative View Rate）：生态负向内容 VV ÷ 总内容 VV × 100%。</div>
+        <p>衡量用户消费中负向内容的占比，越低越好；非原创业务重点关注其中非原创内容的 VV 占比。</p>
+      </div>
+      <div class="table-card mt reveal">
+        <table class="task-table">
+          <thead>
+            <tr><th>指标</th><th>含义与口径</th><th>用途</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Test Model ENVR<small>新模型评估指标组</small></td><td>使用<b>新</b>模型判定负向内容；在识别模型部署后、策略实验开始前更新。</td><td>提前衡量新模型及配套策略的治理效果，支持上线决策。</td></tr>
+            <tr><td>Model ENVR<small>正式关注指标组</small></td><td>使用<b>旧</b>模型（推全模型）判定负向内容；口径随模型／策略全量上线更新。</td><td>在线上推全模型口径下，评估治理策略的效果。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">评估方式</span>
+        <p>实验组与对照组使用同一测量模型、阈值和统计范围，比较 ENVR 的相对变化。模型口径切换本身会改变负向内容集合，因此需结合离线 P/R 解读。同步关注 HLT7、SD，以及 LT7、投稿量、新鲜度等护栏，综合判断收益与代价。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-11">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.11</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>最近推全的实验收益（8W4）</h3></div>
+      </header>
+      <div class="note reveal">
+        <p>本次方案将非原创接入 EcoTag，并升级识别模型、调整分级打压力度。以下按 LR 报告的实验结果汇总。</p>
+      </div>
+      <div class="grid-2 mt">
+        <div class="panel reveal">
+          <div class="label">离线 issue × grade</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l" rowspan="2">数据集</th><th class="span" colspan="3">基线</th><th class="span" colspan="3">新方案</th></tr>
+                <tr><th>P</th><th>R</th><th>F1</th><th>P</th><th>R</th><th>F1</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="l">视频（Global 12k，Policy v4）</td><td>57%</td><td>61%</td><td>59%</td><td><strong>80%</strong></td><td><strong>71%</strong></td><td><strong>76%</strong></td></tr>
+                <tr><td class="l">图文（Global 6k，Policy v5）</td><td>59%</td><td>50%</td><td>54%</td><td><strong>80%</strong></td><td><strong>50%</strong></td><td><strong>62%</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel reveal" style="--d: .08s">
+          <div class="label">线上（相对对照组的变化）</div>
+          <div class="table-card">
+            <table class="rt">
+              <thead>
+                <tr><th class="l" rowspan="2">区域</th><th class="span" colspan="2">Test Model ENVR</th><th rowspan="2">SD</th><th rowspan="2">HLT7</th></tr>
+                <tr><th>非原创视频 VV%</th><th>非原创图文 VV%</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="l">RoW</td><td><strong>约 −28%</strong></td><td><strong>约 −17%</strong></td><td>−0.226%</td><td>−0.105%</td></tr>
+                <tr><td class="l">EU</td><td><strong>约 −24%</strong></td><td><strong>约 −13%</strong></td><td>+0.168%</td><td>+0.025%</td></tr>
+                <tr><td class="l">US</td><td><strong>约 −28%</strong></td><td><strong>约 −14%</strong></td><td>持平</td><td>持平</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">结论</span>
+        <p>新模型口径下，非原创视频／图文曝光占比均下降；表中线上数据均为相对对照组的变化。</p>
       </div>
     </div>
   </section>

@@ -1544,6 +1544,19 @@
           <div class="part why"><div class="k">为什么这样做</div><p>客观证据使标签可核验，也便于构造真实数据中稀疏的条件组合，让模型学会哪些证据决定标签，减少对表面特征的依赖。</p></div>
         </article>
       </div>
+      <div class="label mt reveal">合成样例：用训练集中的 TC 样本合成 LC 样本</div>
+      <figure class="fig synth reveal">
+        <div class="synth-head"><span class="chip">初版</span><p>在原视频上逐帧叠加文字贴纸，把完全搬运（TC）改造成低成本二创（LC）。每组取前 3 帧，上为原视频、下为合成后，点击可查看全部帧。</p></div>
+        <div class="synth-pairs">
+          <div class="synth-rows" aria-hidden="true"><span>原视频<i class="grade g1">TC</i></span><span>合成后<i class="grade g2">LC</i></span></div>
+          <img src="assets/bd-synth-case1.jpg" data-full="assets/bd-synth-case1-full.jpg" alt="合成样例 1：夜间行车视频，合成后每帧顶部叠加一行文字贴纸" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case2.jpg" data-full="assets/bd-synth-case2-full.jpg" alt="合成样例 2：古装剧人物特写，合成后每帧中部叠加红底文字贴纸" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case3.jpg" data-full="assets/bd-synth-case3-full.jpg" alt="合成样例 3：爱心动画模板视频，合成后每帧顶部叠加一行文字" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case4.jpg" data-full="assets/bd-synth-case4-full.jpg" alt="合成样例 4：剧集片段，合成后每帧画面下方叠加一段文字" width="680" height="794" loading="lazy" decoding="async">
+        </div>
+        <div class="synth-head"><span class="chip">精细化</span><p>增强视觉与内容样式，文字字体、背景框、大小和位置更多样。用多模态大模型 MLLM v5 测试，正确率仅 40%，进一步核验后接入训练集。</p></div>
+        <img class="synth-strip" src="assets/bd-synth-refined.jpg" alt="精细化后的 6 个合成 LC 样例帧，文字样式与位置各不相同" width="1841" height="520" loading="lazy" decoding="async">
+      </figure>
     </div>
   </section>
 

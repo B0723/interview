@@ -1677,6 +1677,68 @@ math {
   margin-top: 0;
 }
 
+/* ---------------------------------------------------------------- synthesis cases */
+
+.synth {
+  display: grid;
+  gap: 18px;
+}
+
+.synth-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.synth-head .chip {
+  flex: none;
+}
+
+.synth-head p {
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.synth-head:not(:first-child) {
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.synth-pairs {
+  display: grid;
+  grid-template-columns: 64px repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* the two halves line up with the original / synthesized rows of each case image */
+.synth-rows {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+
+.synth-rows span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.synth-rows .grade {
+  margin-top: 6px;
+  font-style: normal;
+}
+
+.synth img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* ---------------------------------------------------------------- footer */
 
 .footer {
@@ -1845,6 +1907,8 @@ math {
   .cls-table td:first-child,
   .cls-table td:nth-child(2) { width: auto; }
   .model .fig img.scale-down { max-width: 100%; }
+  .synth-pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .synth-rows { display: none; }
   .flow-arrow,
   .stages > .flow-arrow { transform: rotate(90deg); padding: 8px 0; }
   .scene { padding: 80px 0; }

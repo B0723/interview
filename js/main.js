@@ -70,7 +70,7 @@
 
   document.querySelectorAll(".fig img").forEach((img) => {
     img.addEventListener("click", () => {
-      boxImg.src = img.currentSrc || img.src;
+      boxImg.src = img.dataset.full || img.currentSrc || img.src;
       boxImg.alt = img.alt;
       box.classList.add("open");
     });

@@ -1641,46 +1641,8 @@ math {
   fill: var(--muted);
 }
 
-.legend {
-  margin: 14px 0 0;
-  padding: 14px 4px 0;
-  list-style: none;
-  display: grid;
-  gap: 8px;
-  border-top: 1px solid var(--line);
-}
-
-.legend li {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-
-.legend i {
-  width: 18px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--c);
-}
-
-.legend .lg-name {
-  overflow-wrap: anywhere;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.legend .lg-id {
-  font-size: 13px;
-  color: var(--faint);
-  font-variant-numeric: tabular-nums;
-}
-
-.legend b {
-  font-size: 14px;
-  color: var(--brand-ink);
-  font-variant-numeric: tabular-nums;
+.fig + .label {
+  margin-top: 22px;
 }
 
 .src-link {

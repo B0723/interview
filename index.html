@@ -1823,19 +1823,12 @@
         <span class="idx">6.4</span>
         <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>自进化审核 Agent：自己找错、写补丁、过门槛</h3></div>
       </header>
-      <div class="note reveal">
-        <p>让 Agent 自己判题，找出常犯的错，写出新规则（Policy 补丁）；只有真的判得更准，才把新规则收进规则手册。转一圈即进化一轮，可以反复迭代。</p>
-      </div>
-      <div class="steps reveal" style="--n: 5">
-        <div class="step"><h5>规则手册</h5><p>当前 Policy 加上已收下的补丁，是 Agent 判题的依据。</p></div>
-        <div class="step"><h5>Solver 判题</h5><p>多轮 ReAct，调用抽帧、标题与 ASR/OCR 等元数据、评论、专家模型和站内搜索等工具逐条判定并给出理由；判错的写下“为什么错”。</p></div>
-        <div class="step"><h5>Reflector 归因</h5><p>统计各类准确率与混淆矩阵，把错题按“错法”归类，形成错误报告。</p></div>
-        <div class="step"><h5>Evolver 提改进</h5><p>针对错题的共性写补丁：细化判定边界，或给出某类问题的处理规则；必要时调整工具池与提示词。</p></div>
-        <div class="step"><h5>接受门</h5><p>加入补丁后重判评测集，提升达到阈值才收下，手册版本 +1；否则丢弃。</p></div>
-      </div>
+      <figure class="fig reveal">
+        <img src="assets/topvv-evolve-loop.png" alt="审核 Agent 的自进化主循环：规则手册 → Solver 判题 → Reflector 归因 → Evolver 提改进 → 接受门；用新手册重判测试集，提升达到阈值才收下，手册版本加一并进入下一轮" width="2440" height="1287" loading="lazy" decoding="async">
+      </figure>
       <div class="takeaway reveal">
         <span class="tag">说明</span>
-        <p>补丁可检索、可引用、可版本化，并与权威 Policy 交叉引用；Solver 推理时看到全部补丁，自行决定用哪些。整个循环由 Harness 编排：每个审核场景各有一套评测集、指标和进化循环。</p>
+        <p>Solver 判题时多轮调用抽帧、标题与 ASR/OCR 等元数据、评论、专家模型和站内搜索等工具；Evolver 除了写补丁，也可以调整工具池与提示词。补丁可检索、可引用、可版本化，并与权威 Policy 交叉引用；Solver 推理时看到全部补丁，自行决定用哪些。</p>
       </div>
     </div>
   </section>

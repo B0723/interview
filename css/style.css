@@ -252,7 +252,7 @@ sub, sup {
 .agenda {
   margin-top: 56px;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -526,6 +526,11 @@ sub, sup {
 
 .mt { margin-top: 32px; }
 
+/* components that reset their own margin need the compound selector to keep .mt */
+.fig.mt,
+.table-card.mt,
+.obs.mt { margin-top: 32px; }
+
 /* ---------------------------------------------------------------- cards */
 
 .cards {
@@ -727,6 +732,11 @@ sub, sup {
   font-weight: 700;
   color: var(--brand-ink);
   background: var(--brand-50);
+}
+
+.rt .ns {
+  font-weight: 400;
+  color: var(--muted);
 }
 
 .rt tr.sec td {
@@ -1177,6 +1187,11 @@ sub, sup {
   font-size: 13px;
   font-weight: 500;
   color: var(--muted);
+}
+
+.metric-table td:first-child,
+.metric-table td:last-child {
+  white-space: nowrap;
 }
 
 .case {
@@ -1909,6 +1924,8 @@ math {
   .model .fig img.scale-down { max-width: 100%; }
   .synth-pairs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .synth-rows { display: none; }
+  .metric-table td:first-child,
+  .metric-table td:last-child { white-space: normal; }
   .flow-arrow,
   .stages > .flow-arrow { transform: rotate(90deg); padding: 8px 0; }
   .scene { padding: 80px 0; }

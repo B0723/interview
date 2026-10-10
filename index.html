@@ -17,6 +17,7 @@
       <a href="#aaai"><b>03</b><span>Sampling-Free UQ</span></a>
       <a href="#project"><b>04</b><span>搜索广告相关性优化</span></a>
       <a href="#bytedance"><b>05</b><span>非原创内容识别</span></a>
+      <a href="#topvv"><b>06</b><span>高热生态治理</span></a>
     </div>
   </div>
   <div class="progress"></div>
@@ -62,6 +63,12 @@
         <span class="venue">实习 · 字节跳动</span>
         <span class="t">非原创内容识别</span>
         <span class="s">级联多模态识别 · 多 teacher 驱动迭代</span>
+      </a>
+      <a href="#topvv">
+        <span class="num">06</span>
+        <span class="venue">实习 · 字节跳动</span>
+        <span class="t">高热内容<br>生态治理</span>
+        <span class="s">Top VV Grade 3 · 自进化审核 Agent</span>
       </a>
     </div>
   </div>
@@ -1716,6 +1723,222 @@
         <span class="tag">结论</span>
         <p>新模型口径下，非原创视频／图文曝光占比均下降；表中线上数据均为相对对照组的变化。</p>
       </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================================================================ 06 Top VV -->
+<section id="topvv">
+  <div class="part-cover">
+    <div class="big-num" aria-hidden="true">06</div>
+    <div class="wrap">
+      <span class="badge reveal">实习 · 字节跳动</span>
+      <h2 class="reveal">高热内容生态治理</h2>
+      <p class="sub reveal">Top VV 高热 Grade 3 · 人机协同 Policy · 自进化审核 Agent</p>
+      <div class="stats reveal">
+        <div class="stat"><b>≈ 人标</b><span>Grade 3 Agent 替代人工标注，大流量实验中与人标组线上表现基本持平</span></div>
+        <div class="stat"><b>−0.79%</b><span>推全模型口径 model ENVR（新方案 v3 相对对照组）</span></div>
+        <div class="stat"><b>−3.59%</b><span>剔除非原创后的 model ENVR（v3 相对对照组）</span></div>
+        <div class="stat"><b>+0.03%</b><span>人均停留时长 SD 正向显著，HLT 持平，没有用消费换治理</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="scene" id="topvv-1">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.1</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>业务背景：什么是高热 Grade 3</h3></div>
+      </header>
+      <div class="note reveal">
+        <p><b>Grade 3</b> 指低 VV 时问题不明显，但拿到高流量后，会因规模放大、模仿扩散或推荐信号污染，对用户、创作者和平台生态造成持续伤害的内容。它不是泛化的违规桶，而是一层高热生态治理。</p>
+        <p><b>核心判定问题：</b>如果这条内容没有火，它是否尚可容忍；如果它成为高热视频，它的规模化传播、可模仿性或推荐信号影响，是否会伤害消费体验、创作者生态、推荐系统完整性或平台信任？</p>
+      </div>
+      <div class="cards mt">
+        <article class="card reveal"><div class="no">01</div><h4>消费用户视角</h4><p>误导性内容削弱用户对信息真实性的判断；情绪收割型内容加重心理负担，让社区氛围戾气化；低质高占用内容浪费注意力；危险恶搞、伪科学等还可能被模仿，造成现实风险。</p></article>
+        <article class="card reveal" style="--d: .08s"><div class="no">02</div><h4>创作者视角</h4><p>模板化、工业化复制的内容一旦拿到流量，会引导作者批量模仿投稿；擦边、审丑、博眼球内容把创作风向带向“越刺激越有效”，拉低整体表达标准。</p></article>
+        <article class="card reveal" style="--d: .16s"><div class="no">03</div><h4>平台视角</h4><p>刷量、诱导互动破坏推荐系统的公平性；伪新闻、虚假背书损害平台信任；可模板化、跨账号复刻的问题内容一旦形成规模，会迅速污染内容池。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-2">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.2</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>治理路径：从人工打标到<span class="hl">大模型打标</span></h3></div>
+      </header>
+      <div class="flow-row reveal">
+        <div class="flow-box"><div class="tag">现状</div><h4>人工打标、处置</h4><p>高热内容依靠人工打标与处置，以此作为基线。</p></div>
+        <div class="flow-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="M13 6l6 6-6 6"/></svg></div>
+        <div class="flow-box solution"><div class="tag">目标</div><h4>大模型打标、处置评估</h4><p>由模型承担 Grade 3 打标，再通过策略实验评估处置效果。</p></div>
+      </div>
+      <div class="steps reveal" style="--n: 5">
+        <div class="step"><h5>拉齐管控原则</h5><p>PM、Policy、算法共标 case，拉齐 Grade 3 的管控维度与管控程度</p></div>
+        <div class="step"><h5>建设打标模型</h5><p>原则拉齐后，用大模型打标</p></div>
+        <div class="step"><h5>提升人机一致率</h5><p>对比人标与模型结果，人工 review diff case 后再拉齐</p></div>
+        <div class="step"><h5>评估管控范围</h5><p>一致率达标后，打标竞品高热内容，看结果是否符合预期</p></div>
+        <div class="step"><h5>策略实验</h5><p>对比高热人标结果，评估漏放与误伤，符合预期后上线</p></div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">闭环</span>
+        <p>上线后定期做 case review，更新、细化 Grade 3 管控规则并优化打标模型。我们的切入点是用<b>自进化审核 Agent</b> 承担 Grade 3 打标，让规则细化和模型优化在同一个循环里完成。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-3">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.3</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>人机协同 Policy：按伤害机制分四个维度</h3></div>
+      </header>
+      <div class="note reveal">
+        <p>Policy 既给 policy owner 阅读，也保留能被 Agent 转换为判定 prompt 和标注流程的结构。维度按<b>伤害机制</b>而不是内容体裁划分：同一条视频可能是娱乐、新闻或广告，关键看它靠什么机制获得高热、规模化后造成什么伤害；多个维度同时命中时全部标出，并按主导伤害确定主维度。</p>
+      </div>
+      <div class="table-card mt reveal">
+        <table class="task-table">
+          <thead>
+            <tr><th>维度</th><th>核心治理关注点</th><th>子分支</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>供给负向<small>D1</small></td><td>高热曝光奖励低价值、可规模复制、模板化或工业化的内容供给。</td><td>低信息模板内容 · 低价值内容组装 · 工业化低价值生产</td></tr>
+            <tr><td>体验破坏<small>D2</small></td><td>高热曝光放大情绪负担、恐惧、焦虑、敌意或负向价值导向。</td><td>情绪消费 · 恐惧、医疗焦虑与感官不适 · 敌意与价值负向</td></tr>
+            <tr><td>流量与互动操纵<small>D3</small></td><td>不依靠内容价值，而是操纵注意力、互动或推荐信号获得流量。</td><td>明确互动操纵 · 迷信或奖励型互动 · 欺骗性注意力钩子</td></tr>
+            <tr><td>平台信任损害<small>D4</small></td><td>误导用户对真实性、事实性、身份、意图或商业性质的判断。</td><td>误导性真实感包装 · 虚假权威、伪造或事实性误导 · 伪装商业或推广意图</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="phases reveal">
+        <div class="phase"><div class="range">证据门槛</div><p>需要清晰的因果链：内容机制 → 高热放大 → 生态伤害。只能说明内容低质、无聊或不熟悉，不满足门槛。</p></div>
+        <div class="phase"><div class="range">先路由，再判 Grade 3</div><p>色情、自残、重度血腥、政治动员、诈骗赌博、未成年安全等不论是否高热都有害的内容，路由到其他治理链路。</p></div>
+        <div class="phase"><div class="range">结构化输出</div><p>是否管控、主维度、命中维度与子分支、是否路由、机制型理由和置信度；人审时是表格列，Agent 输出 JSON。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.4</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>自进化审核 Agent：自己找错、写补丁、过门槛</h3></div>
+      </header>
+      <div class="note reveal">
+        <p>让 Agent 自己判题，找出常犯的错，写出新规则（Policy 补丁）；只有真的判得更准，才把新规则收进规则手册。转一圈即进化一轮，可以反复迭代。</p>
+      </div>
+      <div class="steps reveal" style="--n: 5">
+        <div class="step"><h5>规则手册</h5><p>当前 Policy 加上已收下的补丁，是 Agent 判题的依据。</p></div>
+        <div class="step"><h5>Solver 判题</h5><p>多轮 ReAct，调用抽帧、标题与 ASR/OCR 等元数据、评论、专家模型和站内搜索等工具逐条判定并给出理由；判错的写下“为什么错”。</p></div>
+        <div class="step"><h5>Reflector 归因</h5><p>统计各类准确率与混淆矩阵，把错题按“错法”归类，形成错误报告。</p></div>
+        <div class="step"><h5>Evolver 提改进</h5><p>针对错题的共性写补丁：细化判定边界，或给出某类问题的处理规则；必要时调整工具池与提示词。</p></div>
+        <div class="step"><h5>接受门</h5><p>加入补丁后重判评测集，提升达到阈值才收下，手册版本 +1；否则丢弃。</p></div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">说明</span>
+        <p>补丁可检索、可引用、可版本化，并与权威 Policy 交叉引用；Solver 推理时看到全部补丁，自行决定用哪些。整个循环由 Harness 编排：每个审核场景各有一套评测集、指标和进化循环。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-5">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.5</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>一轮进化：只在真的变好时才收下</h3></div>
+      </header>
+      <div class="grid-6-6">
+        <ol class="vsteps">
+          <li class="reveal"><div><h5>判题，筛出真错题</h5><p>每轮抽 512 条训练样本，Solver 逐条判定并保留完整推理轨迹。只有运行成功、格式合法、判错且轨迹可读的才算错题；工具、网络、超时等失败不计入。</p></div></li>
+          <li class="reveal"><div><h5>归类，聚焦最大的错误簇</h5><p>Reflector 维护“场景 × 错误类型”的错误分类树，每道错题归到唯一叶子；选出当前最大的 3 个簇，合计不超过 256 题作为验证集。</p></div></li>
+          <li class="reveal"><div><h5>为每个簇写补丁</h5><p>Evolver 在一次事务中，为每个选中的簇新增或修改一条补丁（Skill）。</p></div></li>
+          <li class="reveal"><div><h5>双跑验证，整体生效</h5><p>候选版本在同一批题上独立跑两次，每个簇在各自的验证题上、每一次都要多做对至少 10%；任何一格不达标就整体拒绝，通过后错误分类树与补丁一起生效。</p></div></li>
+        </ol>
+        <div class="panel reveal">
+          <div class="label">人机协同：Policy 怎么迭代</div>
+          <ol class="obs">
+            <li><span class="n">1</span><p><b>加机制，不加 case 清单。</b>只有当 case 揭示出可复用的机制、边界或区分点时，才写入 Policy。</p></li>
+            <li><span class="n">2</span><p><b>放到正确层级。</b>澄清定义改 Definition，细化维度改 D1–D4，区分其他政策改路由规则；只解释个案的，留在 case review 记录里。</p></li>
+            <li><span class="n">3</span><p><b>保留正反边界。</b>每条新规则都写清什么该管、什么不该管、关键区别是什么。</p></li>
+            <li><span class="n">4</span><p><b>避免指标驱动的漂移。</b>模型错误、F1 变化和 diff review 用来发现缺口；写进 Policy 的是抽象出的业务原则，而不是实验本身。</p></li>
+          </ol>
+        </div>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">分工</span>
+        <p>Policy 通过人工审核与 Agent 辅助的 case 分析持续迭代：Agent 的补丁解决具体错误簇，其中可复用的机制再由 policy owner 抽象后写回 Policy。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-6">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.6</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>大流量实验：分组与指标口径</h3></div>
+      </header>
+      <div class="note reveal">
+        <p>实验把高热（Top VV）治理迁移到 EcoTag：全球 50% 流量分为 5 组，每组约 2 亿用户，为期 4 天（2026-09-04 至 09-08）。v2 与 v3 只差 Grade 3 由人标还是 Agent 标，二者对比即 <b>Agent 替代人标</b>的增量效果。</p>
+      </div>
+      <div class="table-card mt reveal">
+        <table class="task-table">
+          <thead>
+            <tr><th>组别</th><th>高热治理策略</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>v0<small>对照组</small></td><td>线上现状：高热机审 + 人审</td></tr>
+            <tr><td>反转组</td><td>下线高热机审与人审，衡量现有治理的收益与代价</td></tr>
+            <tr><td>v1</td><td>下线高热机审 + 人审，上线 issue 模型 P85 机标</td></tr>
+            <tr><td>v2</td><td>下线高热机审，上线 issue 模型 P85 机标；保留 Grade 3 人标</td></tr>
+            <tr><td>v3<small>新方案</small></td><td>下线高热机审 + Grade 3 人标，上线 issue 模型 P85 机标 + <b>Grade 3 Agent 标</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-card mt reveal">
+        <table class="task-table metric-table">
+          <thead>
+            <tr><th>指标</th><th>含义与口径</th><th>方向</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Model ENVR<small>推全模型口径</small></td><td>用已推全的旧模型判定负向内容。model ENVR ＝ 负向 VV（非原创、PQC、Clickbait、BFS、IPC 去重合并）÷ 非广告公开内容 VV；“剔除非原创”版本用来观察其余问题的综合变化。</td><td>越低越好</td></tr>
+            <tr><td>Test Model ENVR<small>新模型口径</small></td><td>用待评估的新模型判定负向内容，按 issue 拆分；本实验看视频口径，不含图文。</td><td>越低越好</td></tr>
+            <tr><td>SD<small>StayDuration/U</small></td><td>人均停留时长：Session 停留时长之和 ÷ 进组用户数。</td><td>越高越好</td></tr>
+            <tr><td>HLT<small>Active Hours</small></td><td>人均有效活跃小时数：有效 Session 贡献的活跃小时数之和 ÷ 进组用户数，不是观看时长换算。</td><td>越高越好</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="takeaway reveal">
+        <span class="tag">解读</span>
+        <p>两套 ENVR 同向改善，证据更强；只有 Test Model 改善时，要警惕“新模型衡量新策略”的同源效应。SD、HLT 作为消费护栏，确认治理收益没有以用户消费为代价。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="topvv-7">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">6.7</span>
+        <div><p class="kicker">字节跳动 · 高热内容生态治理</p><h3>大流量实验结果：Agent 替代人标，治理收益不减</h3></div>
+      </header>
+      <div class="table-card reveal">
+        <table class="rt">
+          <thead>
+            <tr><th class="l" rowspan="2">组别（相对对照组）</th><th class="span" colspan="2">Model ENVR（推全模型）</th><th class="span" colspan="3">Test Model ENVR（新模型 · 视频 VV%）</th><th class="span" colspan="2">消费护栏</th></tr>
+            <tr><th>model ENVR</th><th>剔除非原创</th><th>非原创</th><th>Clickbait</th><th>BFS</th><th>SD</th><th>HLT</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="l">反转组：下线高热机审与人审</td><td>+1.89%</td><td>+2.94%</td><td>+2.83%</td><td>+2.97%</td><td>+13.06%</td><td>+0.418%</td><td>+0.083%</td></tr>
+            <tr><td class="l">v1：issue 模型机标，下线人审</td><td>+0.18%</td><td>−2.24%</td><td>−0.67%</td><td>−7.42%</td><td>−1.66%</td><td>+0.338%</td><td>+0.073%</td></tr>
+            <tr><td class="l">v2：issue 模型机标 + Grade 3 人标</td><td>−0.75%</td><td>−3.59%</td><td>−1.75%</td><td>−8.34%</td><td>−9.04%</td><td><span class="ns">+0.006%</span></td><td><span class="ns">+0.002%</span></td></tr>
+            <tr class="em"><td class="l">v3：issue 模型机标 + Grade 3 Agent 标</td><td>−0.79%</td><td>−3.59%</td><td>−1.80%</td><td>−8.36%</td><td>−9.16%</td><td>+0.029%</td><td><span class="ns">+0.007%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fineprint">ENVR 越低越好，SD、HLT 越高越好；灰色为不显著（显著性水平 5%），其余均显著。数据取 Libra 报告默认口径，窗口 2026-09-04 至 09-08。</p>
+      <ol class="obs mt">
+        <li class="reveal"><span class="n">1</span><p><b>v3 相对对照组：</b>推全模型与新模型两套 ENVR 口径同向显著下降，SD 微升、HLT 持平，没有用消费换治理。</p></li>
+        <li class="reveal"><span class="n">2</span><p><b>v3 相对 v2：</b>差异接近零（model ENVR 再降约 0.04%，SD 略升，BFS 在推全模型口径下小幅反向），说明 Grade 3 Agent 能以基本等效的线上表现替代人工标注；治理收益主要来自两组共有的 issue 模型机标。</p></li>
+        <li class="reveal"><span class="n">3</span><p><b>反转组：</b>ENVR 明显上升，同时 SD、HLT 上升，说明高热治理本身有消费代价；v3 的治理力度比现状更强（ENVR 更低），SD、HLT 却没有进一步下降。</p></li>
+      </ol>
     </div>
   </section>
 </section>

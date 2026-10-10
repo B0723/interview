@@ -1659,6 +1659,24 @@ math {
   border-bottom-color: var(--brand);
 }
 
+.refs {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 28px;
+}
+
+.refs-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.refs .src-link {
+  margin-top: 0;
+}
+
 /* ---------------------------------------------------------------- footer */
 
 .footer {

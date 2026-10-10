@@ -1603,6 +1603,18 @@
           <a class="src-link" href="https://ml.tiktok-row.net/experiment/tracking/detail?Id=project_20260801_65cc370e&amp;tab=CHART" target="_blank" rel="noopener">实验记录：Merlin · sft_unorig_photo（内网）↗</a>
         </div>
       </div>
+      <div class="label mt reveal">补充清洗方法：Pass@k 定位疑似错标</div>
+      <div class="grid-5-7 center">
+        <article class="method reveal">
+          <h4>Pass@k 清洗</h4>
+          <div class="part"><div class="k">怎么做</div><p>取训练过程中的 K＝8 个 checkpoint，对训练集每条样本计算各 checkpoint 给标注标签的概率 p<sub>k</sub>[gold]：均值记为<b>置信度</b>，标准差记为<b>波动度</b>。按这两个维度把样本分成 easy、hard_to_learn、ambiguous、<b>疑似错标</b>（mislabel candidates）等区域，据此挑选送标数据。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>只看一次预测，分不清“难样本”和“错标签”。多个 checkpoint 一致地给标注标签低概率（低置信、低波动），更可能是标签本身有误；波动大的样本说明模型在 checkpoint 之间摇摆，多为边界模糊的样本。按区域分流，人工复核就能集中在最可能出错的少量样本上。</p></div>
+        </article>
+        <figure class="fig reveal" style="--d: .08s">
+          <img src="assets/bd-cartography.png" alt="Dataset Cartography 散点图：横轴为 8 个 checkpoint 给标注标签的平均概率，纵轴为其标准差，样本分为 easy、hard_to_learn、ambiguous、疑似错标和其余五类" width="1280" height="1016" loading="lazy" decoding="async">
+          <figcaption>训练集数据地图（N＝937,759）<br>easy 72.2 万 · ambiguous 8.4 万 · hard_to_learn 1.3 万 · 疑似错标 3,511 · 其余 11.6 万</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 

@@ -529,7 +529,8 @@ sub, sup {
 /* components that reset their own margin need the compound selector to keep .mt */
 .fig.mt,
 .table-card.mt,
-.obs.mt { margin-top: 32px; }
+.obs.mt,
+.refs.mt { margin-top: 32px; }
 
 /* ---------------------------------------------------------------- cards */
 

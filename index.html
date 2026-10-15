@@ -1327,6 +1327,11 @@
           <img src="assets/bd-taxonomy.png" alt="非原创五分类与对应的治理等级" width="1228" height="624" loading="lazy" decoding="async">
         </figure>
       </div>
+      <div class="refs mt reveal">
+        <span class="refs-title">参考：判定规则与标注指南（飞书内部文档）</span>
+        <a class="src-link" href="https://bytedance.larkoffice.com/docx/LO32dBqVboAr1ExmKXslhJbhglf" target="_blank" rel="noopener">视频 OG：[P&amp;C]Unoriginal Video Operational Guidelines v4.0 ↗</a>
+        <a class="src-link" href="https://bytedance.larkoffice.com/docx/D5uedqkMZol91FxjvcllXlM2gTc" target="_blank" rel="noopener">图文 OG：[P&amp;C]Unoriginal Photo&amp;Text Operational Guidelines v5.0 ↗</a>
+      </div>
     </div>
   </section>
 
@@ -1424,11 +1429,6 @@
           </tbody>
         </table>
       </div>
-      <div class="refs reveal">
-        <span class="refs-title">参考：判定规则与标注指南（飞书内部文档）</span>
-        <a class="src-link" href="https://bytedance.larkoffice.com/docx/LO32dBqVboAr1ExmKXslhJbhglf" target="_blank" rel="noopener">视频 OG：[P&amp;C]Unoriginal Video Operational Guidelines v4.0 ↗</a>
-        <a class="src-link" href="https://bytedance.larkoffice.com/docx/D5uedqkMZol91FxjvcllXlM2gTc" target="_blank" rel="noopener">图文 OG：[P&amp;C]Unoriginal Photo&amp;Text Operational Guidelines v5.0 ↗</a>
-      </div>
     </div>
   </section>
 
@@ -1436,6 +1436,30 @@
     <div class="wrap">
       <header class="scene-head reveal">
         <span class="idx">5.3</span>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>业务效果：离线指标口径</h3></div>
+      </header>
+      <div class="defs reveal">
+        <div class="def">
+          <h4>issue × grade</h4>
+          <p>按模型阈值与优先级得到最终预测，再按 <b>Grade1＝TC（站内＋站外）、Grade2＝LC、其他＝Normal／HC</b> 统计。同级命中计 TP，误报及 TC↔LC 错档计 FP，非原创被判为其他计 FN；本业务口径中，错档不再计 FN。</p>
+        </div>
+        <div class="def">
+          <h4>单头 P/R</h4>
+          <p>每个类别分别做“该类／非该类”二分类，分数达到阈值即判正。TC 总头合并站内、站外 TC，LC 头只看 LC。</p>
+        </div>
+      </div>
+      <div class="label mt reveal">计数与公式对照</div>
+      <figure class="fig reveal">
+        <img src="assets/bd-metrics.png" alt="issue × grade 与单头 P/R 的计数方式及 P、R、F1 公式" width="2412" height="781" loading="lazy" decoding="async">
+      </figure>
+      <p class="fineprint">口径均由 Policy 和 PM 同学定义。</p>
+    </div>
+  </section>
+
+  <section class="scene" id="bytedance-4">
+    <div class="wrap">
+      <header class="scene-head reveal">
+        <span class="idx">5.4</span>
         <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>线上识别链路</h3></div>
       </header>
       <figure class="fig reveal">
@@ -1453,10 +1477,10 @@
     </div>
   </section>
 
-  <section class="scene" id="bytedance-4">
+  <section class="scene" id="bytedance-5">
     <div class="wrap">
       <header class="scene-head reveal">
-        <span class="idx">5.4</span>
+        <span class="idx">5.5</span>
         <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型细节：Pairwise 与 SigLIP 小模型</h3></div>
       </header>
       <div class="models">
@@ -1487,10 +1511,10 @@
     </div>
   </section>
 
-  <section class="scene" id="bytedance-5">
+  <section class="scene" id="bytedance-6">
     <div class="wrap">
       <header class="scene-head reveal">
-        <span class="idx">5.5</span>
+        <span class="idx">5.6</span>
         <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型细节：多模态大模型（Qwen-based）</h3></div>
       </header>
       <div class="models">
@@ -1510,10 +1534,10 @@
     </div>
   </section>
 
-  <section class="scene" id="bytedance-6">
+  <section class="scene" id="bytedance-7">
     <div class="wrap">
       <header class="scene-head reveal">
-        <span class="idx">5.6</span>
+        <span class="idx">5.7</span>
         <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>模型训练：挑战与整体思路</h3></div>
       </header>
       <div class="label reveal">挑战</div>
@@ -1533,47 +1557,25 @@
     </div>
   </section>
 
-  <section class="scene" id="bytedance-7">
-    <div class="wrap">
-      <header class="scene-head reveal">
-        <span class="idx">5.7</span>
-        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>数据构建：持续扩召、按需合成</h3></div>
-      </header>
-      <div class="grid-2">
-        <article class="method reveal">
-          <h4>多路扩召</h4>
-          <div class="part"><div class="k">怎么做</div><p>围绕目标类型与每轮评估 badcase，持续通过<b>内容相似检索、作者历史发文</b>等线索扩展候选数据，使训练数据更接近目标分布。</p></div>
-          <div class="part why"><div class="k">为什么这样做</div><p>随机采样和单一路径难以覆盖目标类型；持续扩召能随模型迭代补齐新的覆盖缺口，提高有效样本占比。</p></div>
-        </article>
-        <article class="method reveal" style="--d: .08s">
-          <h4>Agent 合成</h4>
-          <div class="part"><div class="k">怎么做</div><p>针对水印等有客观证据的规则，控制关键条件，合成<b>正例、反例和难例</b>，例如改变水印与作者身份的匹配关系。</p></div>
-          <div class="part why"><div class="k">为什么这样做</div><p>客观证据使标签可核验，也便于构造真实数据中稀疏的条件组合，让模型学会哪些证据决定标签，减少对表面特征的依赖。</p></div>
-        </article>
-      </div>
-      <div class="label mt reveal">合成样例：用训练集中的 TC 样本合成 LC 样本</div>
-      <figure class="fig synth reveal">
-        <div class="synth-head"><span class="chip">初版</span><p>在原视频上逐帧叠加文字贴纸，把完全搬运（TC）改造成低成本二创（LC）。每组取前 3 帧，上为原视频、下为合成后，点击可查看全部帧。</p></div>
-        <div class="synth-pairs">
-          <div class="synth-rows" aria-hidden="true"><span>原视频<i class="grade g1">TC</i></span><span>合成后<i class="grade g2">LC</i></span></div>
-          <img src="assets/bd-synth-case1.jpg" data-full="assets/bd-synth-case1-full.jpg" alt="合成样例 1：夜间行车视频，合成后每帧顶部叠加一行文字贴纸" width="680" height="794" loading="lazy" decoding="async">
-          <img src="assets/bd-synth-case2.jpg" data-full="assets/bd-synth-case2-full.jpg" alt="合成样例 2：古装剧人物特写，合成后每帧中部叠加红底文字贴纸" width="680" height="794" loading="lazy" decoding="async">
-          <img src="assets/bd-synth-case3.jpg" data-full="assets/bd-synth-case3-full.jpg" alt="合成样例 3：爱心动画模板视频，合成后每帧顶部叠加一行文字" width="680" height="794" loading="lazy" decoding="async">
-          <img src="assets/bd-synth-case4.jpg" data-full="assets/bd-synth-case4-full.jpg" alt="合成样例 4：剧集片段，合成后每帧画面下方叠加一段文字" width="680" height="794" loading="lazy" decoding="async">
-        </div>
-        <div class="synth-head"><span class="chip">精细化</span><p>增强视觉与内容样式，文字字体、背景框、大小和位置更多样。用多模态大模型 MLLM v5 测试，正确率仅 40%，进一步核验后接入训练集。</p></div>
-        <img class="synth-strip" src="assets/bd-synth-refined.jpg" alt="精细化后的 6 个合成 LC 样例帧，文字样式与位置各不相同" width="1841" height="520" loading="lazy" decoding="async">
-      </figure>
-    </div>
-  </section>
-
   <section class="scene" id="bytedance-8">
     <div class="wrap">
       <header class="scene-head reveal">
         <span class="idx">5.8</span>
         <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>清洗与训练：多 teacher 驱动迭代</h3></div>
       </header>
-      <div class="note reveal">
+      <div class="label reveal">Pass@k 清洗：定位疑似错标</div>
+      <div class="grid-5-7 center">
+        <article class="method reveal">
+          <h4>Pass@k 清洗</h4>
+          <div class="part"><div class="k">怎么做</div><p>取训练过程中的 K＝8 个 checkpoint，对训练集每条样本计算各 checkpoint 给标注标签的概率 p<sub>k</sub>[gold]：均值记为<b>置信度</b>，标准差记为<b>波动度</b>。按这两个维度把样本分成 easy、hard_to_learn、ambiguous、<b>疑似错标</b>（mislabel candidates）等区域，据此挑选送标数据。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>只看一次预测，分不清“难样本”和“错标签”。多个 checkpoint 一致地给标注标签低概率（低置信、低波动），更可能是标签本身有误；波动大的样本说明模型在 checkpoint 之间摇摆，多为边界模糊的样本。按区域分流，人工复核就能集中在最可能出错的少量样本上。</p></div>
+        </article>
+        <figure class="fig reveal" style="--d: .08s">
+          <img src="assets/bd-cartography.png" alt="Dataset Cartography 散点图：横轴为 8 个 checkpoint 给标注标签的平均概率，纵轴为其标准差，样本分为 easy、hard_to_learn、ambiguous、疑似错标和其余五类" width="1280" height="1016" loading="lazy" decoding="async">
+          <figcaption>训练集数据地图（N＝937,759）<br>easy 72.2 万 · ambiguous 8.4 万 · hard_to_learn 1.3 万 · 疑似错标 3,511 · 其余 11.6 万</figcaption>
+        </figure>
+      </div>
+      <div class="note mt reveal">
         <p>非原创规则涉及多层条件与信息增量判断，if-else 的逻辑较多导致边界较“不规则”；扩召的数据直接混训会带入噪声，逐条依赖高质量人工标注又难以规模化（且目前还没有一个 PR80 的 Agent 能用来直接蒸馏）。遂，通过<b>“持续扩召／按需合成 → 重标清洗 → SFT → 验证反馈”</b>反复迭代，并用多 teacher 改善 label 质量。</p>
       </div>
       <div class="grid-6-6 mt">
@@ -1610,18 +1612,6 @@
           <a class="src-link" href="https://ml.tiktok-row.net/experiment/tracking/detail?Id=project_20260801_65cc370e&amp;tab=CHART" target="_blank" rel="noopener">实验记录：Merlin · sft_unorig_photo（内网）↗</a>
         </div>
       </div>
-      <div class="label mt reveal">补充清洗方法：Pass@k 定位疑似错标</div>
-      <div class="grid-5-7 center">
-        <article class="method reveal">
-          <h4>Pass@k 清洗</h4>
-          <div class="part"><div class="k">怎么做</div><p>取训练过程中的 K＝8 个 checkpoint，对训练集每条样本计算各 checkpoint 给标注标签的概率 p<sub>k</sub>[gold]：均值记为<b>置信度</b>，标准差记为<b>波动度</b>。按这两个维度把样本分成 easy、hard_to_learn、ambiguous、<b>疑似错标</b>（mislabel candidates）等区域，据此挑选送标数据。</p></div>
-          <div class="part why"><div class="k">为什么这样做</div><p>只看一次预测，分不清“难样本”和“错标签”。多个 checkpoint 一致地给标注标签低概率（低置信、低波动），更可能是标签本身有误；波动大的样本说明模型在 checkpoint 之间摇摆，多为边界模糊的样本。按区域分流，人工复核就能集中在最可能出错的少量样本上。</p></div>
-        </article>
-        <figure class="fig reveal" style="--d: .08s">
-          <img src="assets/bd-cartography.png" alt="Dataset Cartography 散点图：横轴为 8 个 checkpoint 给标注标签的平均概率，纵轴为其标准差，样本分为 easy、hard_to_learn、ambiguous、疑似错标和其余五类" width="1280" height="1016" loading="lazy" decoding="async">
-          <figcaption>训练集数据地图（N＝937,759）<br>easy 72.2 万 · ambiguous 8.4 万 · hard_to_learn 1.3 万 · 疑似错标 3,511 · 其余 11.6 万</figcaption>
-        </figure>
-      </div>
     </div>
   </section>
 
@@ -1629,23 +1619,33 @@
     <div class="wrap">
       <header class="scene-head reveal">
         <span class="idx">5.9</span>
-        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>业务效果：离线指标口径</h3></div>
+        <div><p class="kicker">字节跳动 · 非原创内容识别</p><h3>数据构建：持续扩召、按需合成</h3></div>
       </header>
-      <div class="defs reveal">
-        <div class="def">
-          <h4>issue × grade</h4>
-          <p>按模型阈值与优先级得到最终预测，再按 <b>Grade1＝TC（站内＋站外）、Grade2＝LC、其他＝Normal／HC</b> 统计。同级命中计 TP，误报及 TC↔LC 错档计 FP，非原创被判为其他计 FN；本业务口径中，错档不再计 FN。</p>
-        </div>
-        <div class="def">
-          <h4>单头 P/R</h4>
-          <p>每个类别分别做“该类／非该类”二分类，分数达到阈值即判正。TC 总头合并站内、站外 TC，LC 头只看 LC。</p>
-        </div>
+      <div class="grid-2">
+        <article class="method reveal">
+          <h4>多路扩召</h4>
+          <div class="part"><div class="k">怎么做</div><p>围绕目标类型与每轮评估 badcase，持续通过<b>内容相似检索、作者历史发文</b>等线索扩展候选数据，使训练数据更接近目标分布。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>随机采样和单一路径难以覆盖目标类型；持续扩召能随模型迭代补齐新的覆盖缺口，提高有效样本占比。</p></div>
+        </article>
+        <article class="method reveal" style="--d: .08s">
+          <h4>Agent 合成</h4>
+          <div class="part"><div class="k">怎么做</div><p>针对水印等有客观证据的规则，控制关键条件，合成<b>正例、反例和难例</b>，例如改变水印与作者身份的匹配关系。</p></div>
+          <div class="part why"><div class="k">为什么这样做</div><p>客观证据使标签可核验，也便于构造真实数据中稀疏的条件组合，让模型学会哪些证据决定标签，减少对表面特征的依赖。</p></div>
+        </article>
       </div>
-      <div class="label mt reveal">计数与公式对照</div>
-      <figure class="fig reveal">
-        <img src="assets/bd-metrics.png" alt="issue × grade 与单头 P/R 的计数方式及 P、R、F1 公式" width="2412" height="781" loading="lazy" decoding="async">
+      <div class="label mt reveal">合成样例：用训练集中的 TC 样本合成 LC 样本</div>
+      <figure class="fig synth reveal">
+        <div class="synth-head"><span class="chip">初版</span><p>在原视频上逐帧叠加文字贴纸，把完全搬运（TC）改造成低成本二创（LC）。每组取前 3 帧，上为原视频、下为合成后，点击可查看全部帧。</p></div>
+        <div class="synth-pairs">
+          <div class="synth-rows" aria-hidden="true"><span>原视频<i class="grade g1">TC</i></span><span>合成后<i class="grade g2">LC</i></span></div>
+          <img src="assets/bd-synth-case1.jpg" data-full="assets/bd-synth-case1-full.jpg" alt="合成样例 1：夜间行车视频，合成后每帧顶部叠加一行文字贴纸" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case2.jpg" data-full="assets/bd-synth-case2-full.jpg" alt="合成样例 2：古装剧人物特写，合成后每帧中部叠加红底文字贴纸" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case3.jpg" data-full="assets/bd-synth-case3-full.jpg" alt="合成样例 3：爱心动画模板视频，合成后每帧顶部叠加一行文字" width="680" height="794" loading="lazy" decoding="async">
+          <img src="assets/bd-synth-case4.jpg" data-full="assets/bd-synth-case4-full.jpg" alt="合成样例 4：剧集片段，合成后每帧画面下方叠加一段文字" width="680" height="794" loading="lazy" decoding="async">
+        </div>
+        <div class="synth-head"><span class="chip">精细化</span><p>增强视觉与内容样式，文字字体、背景框、大小和位置更多样。用多模态大模型 MLLM v5 测试，正确率仅 40%，进一步核验后接入训练集。</p></div>
+        <img class="synth-strip" src="assets/bd-synth-refined.jpg" alt="精细化后的 6 个合成 LC 样例帧，文字样式与位置各不相同" width="1841" height="520" loading="lazy" decoding="async">
       </figure>
-      <p class="fineprint">口径均由 Policy 和 PM 同学定义。</p>
     </div>
   </section>
 
